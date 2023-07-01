@@ -1,6 +1,6 @@
 
-const {usuariosPost} = require('./usuario')
+const usuariosController = require('./usuario')
 
 module.exports = {
-    usuariosPost
+    ...usuariosController
 }

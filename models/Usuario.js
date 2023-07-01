@@ -14,7 +14,7 @@ const UsuarioSchema = Schema({
         type: String,
         required: [true, 'Contraseña obligatorio'],
     },
-    rol: {
+    role: {
         type: String,
         required: true,
         default: 'USER_ROLE',

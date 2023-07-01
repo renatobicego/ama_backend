@@ -9,7 +9,8 @@ class Server {
         this.port = process.env.PORT
 
         this.paths = {
-            usuariosPath: '/api/usuarios'
+            usuariosPath: '/api/usuarios',
+            authPath: '/api/auth'
         }
 
         //Base de datos
@@ -39,6 +40,7 @@ class Server {
 
     routes(){
         this.app.use(this.paths.usuariosPath, require('../routes/usuario'))
+        this.app.use(this.paths.authPath, require('../routes/auth'))
     }
 
     listen(){
