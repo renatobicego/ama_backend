@@ -20,8 +20,8 @@ router.put('/:id', [
 router.post('/', [
     check('nombre_apellido', 'Nombre obligatorio').not().isEmpty(),
     check('dni', 'DNI obligatorio').not().isEmpty(),
-    check('fecha_nacimiento', 'Fecha de nacimiento obligatoria').isDate({format: 'YYYY-MM-dd'}),
     check('dni', 'Ingrese el DNI correctamente').isLength({min: 6}),
+    check('fecha_nacimiento', 'Fecha de nacimiento obligatoria').isDate({format: 'YYYY-MM-dd'}),
     check('email', 'Correo no válido').isEmail(),
     check('email').custom(existeEmail),
     check('password', 'Password obligatorio').isLength({min: 8}),

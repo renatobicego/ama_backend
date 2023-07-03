@@ -1,4 +1,4 @@
-const { Usuario, Role } = require("../../models")
+const { Usuario, Role, Club } = require("../../models")
 
 
 const existeEmail = async(email) => {
@@ -7,6 +7,13 @@ const existeEmail = async(email) => {
         throw new Error(`El correo ${email} ya está registrado`)
     }
 } 
+
+const existeEmailClub = async(email) => {
+    const buscarMail = await Club.findOne({email})
+    if(buscarMail){
+        throw new Error(`El club con correo ${email} ya está registrado`)
+    }
+}
 
 const esRoleValido = async(role = '') => {
 
@@ -25,8 +32,11 @@ const existeUsuarioPorId = async( id ) => {
     }
 }
 
+
+
 module.exports = {
     existeEmail,
     esRoleValido,
-    existeUsuarioPorId
+    existeUsuarioPorId,
+    existeEmailClub
 }

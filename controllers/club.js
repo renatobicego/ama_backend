@@ -34,6 +34,21 @@ const clubPost = async (req, res) => {
     })
 }
 
+const clubGet = async(req, res) => {
+
+    const [ total, clubes ] = await Promise.all([
+        Club.countDocuments(),
+        Club.find()
+            .populate("entrenadores", ["nombre_apellido", "telefono"])
+    ]);
+
+    res.json({
+        total,
+        clubes
+    });
+}
+
 module.exports = {
-    clubPost
+    clubPost,
+    clubGet
 }

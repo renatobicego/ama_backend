@@ -10,7 +10,8 @@ class Server {
 
         this.paths = {
             usuariosPath: '/api/usuarios',
-            authPath: '/api/auth'
+            authPath: '/api/auth',
+            clubPath: '/api/club'
         }
 
         //Base de datos
@@ -41,6 +42,7 @@ class Server {
     routes(){
         this.app.use(this.paths.usuariosPath, require('../routes/usuario'))
         this.app.use(this.paths.authPath, require('../routes/auth'))
+        this.app.use(this.paths.clubPath, require('../routes/club'))
     }
 
     listen(){

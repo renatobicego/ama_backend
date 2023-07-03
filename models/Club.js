@@ -36,7 +36,8 @@ const ClubSchema = Schema({
     },
     entrenadores: [{
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: 'Usuario',
+        required: true
     }]
 
 })
