@@ -1,3 +1,4 @@
+const { subirArchivoFirebase } = require('../helpers/functions/archivosFirebase')
 const {Club} = require('../models')
 
 const clubPost = async (req, res) => {
@@ -10,10 +11,13 @@ const clubPost = async (req, res) => {
         instagram,
         facebook,
         twitter,
-        logoImg,
         federacion_paga
 
     } = req.body
+
+    const {logoImg} = req.files
+
+    const fbLinkImage = await subirArchivoFirebase(logoImg, 'images/clubes/' + logoImg.name)
 
     const club = new Club({
         nombre, 
@@ -23,8 +27,8 @@ const clubPost = async (req, res) => {
         instagram,
         facebook,
         twitter,
-        logoImg,
-        federacion_paga
+        federacion_paga,
+        logoImg: fbLinkImage
     })
 
     //Guardar Db
