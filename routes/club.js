@@ -1,8 +1,8 @@
 const { Router } = require("express")
-const { clubPost, clubGet } = require("../controllers")
+const { clubPost, clubGet, clubDelete, clubPut } = require("../controllers")
 const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
-const {existeEmailClub} = require('../helpers')
+const {existeEmailClub, existeClubPorId} = require('../helpers')
 const { tieneRole } = require("../middlewares/validarRoles")
 const { validarJWT } = require("../middlewares/validarJwt")
 
@@ -10,12 +10,12 @@ const router = Router()
 
 router.get('/', clubGet)
 
-// router.put('/:id', [
-//     check('id', 'No es un ID válido').isMongoId(),
-//     check('id').custom( existeUsuarioPorId ),
-//     check('role').custom( esRoleValido ), 
-//     validarCampos
-// ], usuariosPut)
+router.put('/:id', [
+    validarJWT,
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeClubPorId ),
+    validarCampos
+], clubPut)
 
 router.post('/', [
     validarJWT,
@@ -28,12 +28,12 @@ router.post('/', [
     validarCampos
 ], clubPost)
 
-// router.delete('/:id', [
-//     validarJWT,
-//     // tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
-//     check('id', 'No es un ID válido').isMongoId(),
-//     check('id').custom( existeUsuarioPorId ),
-//     validarCampos
-// ], usuariosDelete)
+router.delete('/:id', [
+    validarJWT,
+    tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeClubPorId ),
+    validarCampos
+], clubDelete)
 
 module.exports = router

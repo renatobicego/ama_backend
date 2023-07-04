@@ -1,17 +1,40 @@
-const {getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL} = require("firebase/storage")
+const {getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject} = require("firebase/storage")
+const { v4 } = require("uuid")
 
 const storage = getStorage()
 
 const subirArchivoFirebase = async(file, refRoute) => {
-    const directoryRef = ref(storage, refRoute)
+    // Obtener extension de archivo
+    const fileExtension = file.name.split('.')[1]
+    // Generar nombre único
+    const newFileName = v4() + '.' + fileExtension
+
+    // Crear referencia a archivo en Firebase
+    const directoryRef = ref(storage, refRoute + newFileName)
+
     const metadata = {contentType: file.mimetype}
-    const uploadTask = await uploadBytesResumable(directoryRef, file.data, metadata)
-    // Upload completed successfully, now we can get the download URL
-    const downloadURL =  await getDownloadURL(uploadTask.ref)
-    return downloadURL
+
+    try {
+        await uploadBytesResumable(directoryRef, file.data, metadata) 
+    } catch (error) {
+        throw new Error('Error al subir el archivo', error)
+    }
+    
+
+    return refRoute + newFileName
 
 }
 
+const borrarArchivoFirebase = async(refRoute) => {
+    const desertRef = ref(storage, refRoute)
+    // Borrar archivo
+    await deleteObject(desertRef)
+    .catch((error) => {
+        throw new Error('Error al borrar el archivo', error)
+    })
+}
+
 module.exports = {
-    subirArchivoFirebase
+    subirArchivoFirebase,
+    borrarArchivoFirebase
 }

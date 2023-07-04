@@ -74,7 +74,7 @@ const usuariosDelete = async(req, res = response) => {
     const { id } = req.params
 
     // Usuario borra su cuenta o administrador
-    if (req.usuario.id !== id && req.user.role !== 'admin') {
+    if (req.usuario.id !== id && req.usuario.role !== 'ADMIN_ROLE') {
         return res.status(403).json({ msg: 'Acceso denegado, solo administradores pueden borrar usuarios' });
     }
 

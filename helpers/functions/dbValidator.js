@@ -32,11 +32,19 @@ const existeUsuarioPorId = async( id ) => {
     }
 }
 
+const existeClubPorId = async(id) => {
+    const existeClub = await Club.findById(id)
+    if(!existeClub){
+        throw new Error(`El club con id ${ id } no existe `)
+    }
+}
+
 
 
 module.exports = {
     existeEmail,
     esRoleValido,
     existeUsuarioPorId,
-    existeEmailClub
+    existeEmailClub,
+    existeClubPorId
 }

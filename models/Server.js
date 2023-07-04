@@ -33,7 +33,11 @@ class Server {
         this.app.use(express.json())
         this.app.use(express.static('public'))
         this.app.use(fileUpload({
-            createParentPath: true
+            createParentPath: true,
+            limits: {
+                fileSize: 10000000 //10mb
+            },
+            abortOnLimit: true
         }))
     }
 
