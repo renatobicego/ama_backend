@@ -35,8 +35,23 @@ const UsuarioSchema = Schema({
     dni: {
         type: String,
         required: [true, 'DNI obligatorio']
-    }
-
+    },
+    federacion: {
+        type: Schema.Types.ObjectId,
+        ref: 'Federacion'
+    },
+    asociacion: {
+        type: Schema.Types.ObjectId,
+        ref: 'Asociacion'
+    },
+    club: {
+        type: Schema.Types.ObjectId,
+        ref: 'Club'
+    },
+    pruebasFavoritas: [{
+        type: Schema.Types.ObjectId,
+        ref: 'PruebaAtleta'
+    }]
 })
 
 UsuarioSchema.methods.toJSON = function() {

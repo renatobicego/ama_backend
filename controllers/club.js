@@ -78,7 +78,7 @@ const clubGet = async(req, res) => {
 const clubDelete = async(req, res) => {
     const { id } = req.params
 
-    if (req.usuario.role !== 'ADMIN_ROLE') {
+    if (req.usuario.role !== 'ADMIN_ROLE' || req.usuario.role !== 'EDITOR_ROLE') {
         return res.status(403).json({ msg: 'Acceso denegado, solo administradores pueden borrar clubes' })
     }
 

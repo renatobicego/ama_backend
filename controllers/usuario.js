@@ -1,34 +1,55 @@
-const {Usuario} = require('../models/index')
+const {Usuario, PruebaAtleta} = require('../models/index')
 const bcrypt = require('bcryptjs')
 
 const usuariosPost = async (req, res) => {
+
+    // Selecciono cada variable que quiero guardar para evitar 
+    // guardar datos mandados en body erroneamente
 
     let {
         nombre_apellido, 
         email, 
         password, 
-        rol, 
+        role, 
         federacion_paga,
         fecha_nacimiento,
         telefono,
-        dni
-
+        dni,
+        federacion,
+        asociacion,
+        club,
+        pruebasFavoritas
     } = req.body
 
     const usuario = new Usuario({
         nombre_apellido, 
         email, 
         password, 
-        rol, 
+        role, 
         federacion_paga,
         fecha_nacimiento,
         telefono,
-        dni})
+        dni,
+        federacion,
+        asociacion,
+        club
+    })
+
+    // Guardar pruebas favoritas
+    let pruebasArr = []
+    if(pruebasFavoritas.length > 0){
+        pruebasArr = await Promise.all(pruebasFavoritas.map(async (prueba) => {
+            const {marca, prueba: pruebaId} = prueba
+            const pruebaAtleta = new PruebaAtleta({marca, atleta: usuario._id, prueba: pruebaId})
+            await pruebaAtleta.save()
+            return pruebaAtleta._id
+        }))
+        usuario.pruebasFavoritas = pruebasArr
+    }
 
     //Encriptar contraseña
     const salt = bcrypt.genSaltSync()
     usuario.password = bcrypt.hashSync(password, salt)
-
 
     //Guardar Db
     await usuario.save()
@@ -38,13 +59,24 @@ const usuariosPost = async (req, res) => {
 }
 
 const usuariosGet = async(req, res) => {
-    const { limite = 5, desde = 0 } = req.query;
+    const { limite = 10, desde = 0 } = req.query;
 
     const [ total, usuarios ] = await Promise.all([
         Usuario.countDocuments(),
         Usuario.find()
             .skip( Number( desde ) )
             .limit(Number( limite ))
+            .populate("club", "nombre")
+            .populate("federacion", "nombre")
+            .populate("asociacion", "nombre")
+            .populate({
+                path: "pruebasFavoritas",
+                select: ["marca"],
+                populate: {
+                  path: "prueba",
+                  select: ["nombre"],
+                },
+              })
     ]);
 
     res.json({
@@ -64,7 +96,17 @@ const usuariosPut = async(req, res) => {
         resto.password = bcryptjs.hashSync( password, salt );
     }
 
-    const usuario = await Usuario.findByIdAndUpdate( id, resto );
+    // Guardar pruebas favoritas
+    const {pruebasFavoritas} = resto
+
+    if(pruebasFavoritas.length > 0){
+        await pruebasFavoritas.forEach(async (prueba) => {
+            const {_id, atleta, ...restoPrueba} = prueba
+            await PruebaAtleta.findByIdAndUpdate(_id, restoPrueba)
+        })
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate( id, resto )
 
     res.json(usuario);
 }
@@ -78,7 +120,11 @@ const usuariosDelete = async(req, res = response) => {
         return res.status(403).json({ msg: 'Acceso denegado, solo administradores pueden borrar usuarios' });
     }
 
-    const usuario = await Usuario.findByIdAndDelete( id );
+    const usuario = await Usuario.findByIdAndDelete( id )
+
+    await usuario.pruebasFavoritas.forEach(async (prueba) => {
+        await PruebaAtleta.findByIdAndDelete(prueba._id)
+    })
 
     res.json(usuario);
 }

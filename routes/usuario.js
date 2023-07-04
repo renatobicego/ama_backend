@@ -13,7 +13,11 @@ router.get('/', usuariosGet)
 router.put('/:id', [
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeUsuarioPorId ),
-    check('role').custom( esRoleValido ), 
+    check('role').optional().custom( esRoleValido ), 
+    check('dni', 'Ingrese el DNI correctamente').optional().isLength({min: 6}),
+    check('fecha_nacimiento', 'Fecha de nacimiento incorrecta').optional().isDate({format: 'YYYY-MM-dd'}),
+    check('email', 'Correo no válido').optional().isEmail(),
+    check('email').optional().custom(existeEmail),
     validarCampos
 ], usuariosPut)
 
@@ -25,7 +29,6 @@ router.post('/', [
     check('email', 'Correo no válido').isEmail(),
     check('email').custom(existeEmail),
     check('password', 'Password obligatorio').isLength({min: 8}),
-    check('role', 'Rol no válido').isIn(['ADMIN_ROLE', 'USER_ROLE', 'ENTRENADOR_ROLE', 'EDITOR_ROLE']),
     check('role').custom(esRoleValido),
     validarCampos
 ], usuariosPost)
