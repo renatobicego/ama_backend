@@ -1,18 +1,7 @@
 const { subirArchivoFirebase, borrarArchivoFirebase } = require('../helpers')
-const {validarExtension, validarSize} = require('../helpers')
+const {validarArchivos} = require('../helpers')
 const {Club} = require('../models')
 
-const validarLogo = (logoImg, res) => {
-    // Validar la extension
-    if(!validarExtension(logoImg, ['jpg', 'jpeg', 'png'])){
-        return res.status(401).json({msg: 'Extensión no permitida'})
-    }
-
-    // Validar tamaño de archivo
-    if(!validarSize(logoImg)){
-        return res.status(401).json({msg: 'El archivo debe ser menor a 10MB'})
-    }
-}
 
 const clubPost = async (req, res) => {
 
@@ -32,7 +21,7 @@ const clubPost = async (req, res) => {
     const {logoImg} = req.files
 
     // Validad extension y tamaño
-    validarLogo(logoImg, res)
+    validarArchivos(logoImg, res, ['jpg', 'jpeg', 'png'])
 
     // Subir a firebase el logo
     let fbLinkImage 
@@ -63,6 +52,7 @@ const clubPost = async (req, res) => {
 
 const clubGet = async(req, res) => {
 
+    // Query
     const [ total, clubes ] = await Promise.all([
         Club.countDocuments(),
         Club.find()
@@ -78,12 +68,14 @@ const clubGet = async(req, res) => {
 const clubDelete = async(req, res) => {
     const { id } = req.params
 
+    // Solo administradores pueden borrar clubes
     if (req.usuario.role !== 'ADMIN_ROLE' || req.usuario.role !== 'EDITOR_ROLE') {
         return res.status(403).json({ msg: 'Acceso denegado, solo administradores pueden borrar clubes' })
     }
 
     const club = await Club.findByIdAndDelete( id )
 
+    // Borrar logo
     try {
         await borrarArchivoFirebase(club.logoImg)
     } catch (error) {
@@ -103,7 +95,7 @@ const clubPut = async(req, res) => {
         const {logoImg} = req.files
 
         // Validad extension y tamaño
-        validarLogo(logoImg, res)
+        validarArchivos(logoImg, res, ['jpg', 'jpeg', 'png'])
 
         try {
             fbLinkImage = await subirArchivoFirebase(logoImg, 'images/clubes/')
@@ -115,10 +107,13 @@ const clubPut = async(req, res) => {
 
     const club = await Club.findByIdAndUpdate( id, resto )
 
-    try {
-        await borrarArchivoFirebase(club.logoImg)
-    } catch (error) {
-        return res.status(500).json({ msg: error })
+    // Borrar logo anterior si usuario lo cambia (Club.findByIdAndUpdate retorna valores anteriores al update)
+    if ( req.files.logoImg ){
+        try {
+            await borrarArchivoFirebase(club.logoImg)
+        } catch (error) {
+            return res.status(500).json({ msg: error })
+        }
     }
 
     res.json(club)

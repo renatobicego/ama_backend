@@ -59,8 +59,10 @@ const usuariosPost = async (req, res) => {
 }
 
 const usuariosGet = async(req, res) => {
+    // Limitar respuesta
     const { limite = 10, desde = 0 } = req.query;
 
+    // Query
     const [ total, usuarios ] = await Promise.all([
         Usuario.countDocuments(),
         Usuario.find()
@@ -90,6 +92,7 @@ const usuariosPut = async(req, res) => {
     const { id } = req.params;
     const { _id, password, ...resto } = req.body;
 
+    // Si usuario quiere cambiar contraseña
     if ( password ) {
         // Encriptar la contraseña
         const salt = bcryptjs.genSaltSync();

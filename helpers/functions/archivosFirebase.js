@@ -4,10 +4,10 @@ const { v4 } = require("uuid")
 const storage = getStorage()
 
 const subirArchivoFirebase = async(file, refRoute) => {
-    // Obtener extension de archivo
-    const fileExtension = file.name.split('.')[1]
+    // Obtener extension de archivo (en caso de tener más de un punto, usa fileExtension.length - 1)
+    const fileExtension = file.name.split('.')
     // Generar nombre único
-    const newFileName = v4() + '.' + fileExtension
+    const newFileName = v4() + '.' + fileExtension[fileExtension.length - 1]
 
     // Crear referencia a archivo en Firebase
     const directoryRef = ref(storage, refRoute + newFileName)

@@ -9,6 +9,10 @@ const TorneoSchema = Schema({
         type: Date,
         required: [true, 'La fecha es obligatoria']
     },
+    inscripcionesAbiertas: {
+        type: Boolean,
+        default: true
+    },
     programaHorario: {
         type: String,
         default: ''

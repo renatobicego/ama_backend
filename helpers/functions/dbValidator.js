@@ -1,4 +1,4 @@
-const { Usuario, Role, Club } = require("../../models")
+const { Usuario, Role, Club, Torneo } = require("../../models")
 
 
 const existeEmail = async(email) => {
@@ -39,6 +39,13 @@ const existeClubPorId = async(id) => {
     }
 }
 
+const existeTorneoPorId = async(id) => {
+    const existeTorneo = await Torneo.findById(id)
+    if(!existeTorneo){
+        throw new Error(`El torneo con id ${ id } no existe `)
+    }
+}
+
 
 
 module.exports = {
@@ -46,5 +53,6 @@ module.exports = {
     esRoleValido,
     existeUsuarioPorId,
     existeEmailClub,
-    existeClubPorId
+    existeClubPorId,
+    existeTorneoPorId
 }
