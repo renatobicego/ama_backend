@@ -80,7 +80,26 @@ const torneoGet = async(req, res) => {
     res.json({
         total,
         torneos
-    });
+    })
+}
+
+const torneoGetInscripcionActiva = async(req, res) => {
+
+    // Query
+    const [ total, torneos ] = await Promise.all([
+        Torneo.countDocuments(),
+        Torneo.find({inscripcionesAbiertas: true})
+            .populate("pruebasDisponibles", "nombre")
+            .populate("categoriasDisponibles", "nombre")
+            // Ordenar por fecha
+            .sort({fecha: 'desc'})
+            .exec()
+    ]);
+
+    res.json({
+        total,
+        torneos
+    })
 }
 
 const torneoPut = async(req, res) => {
@@ -127,6 +146,7 @@ const torneoDelete = async(req, res) => {
 module.exports = {
     torneoPost,
     torneoGet,
+    torneoGetInscripcionActiva,
     torneoPut,
     torneoDelete
 }

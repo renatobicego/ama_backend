@@ -32,6 +32,15 @@ const existeUsuarioPorId = async( id ) => {
     }
 }
 
+const existeCampeonPorId = async( id ) => {
+
+    // Verificar si el correo existe
+    const existeCampeon = await Campeon.findById(id);
+    if ( !existeCampeon ) {
+        throw new Error(`El campeon con id ${ id } no existe `);
+    }
+}
+
 const existeClubPorId = async(id) => {
     const existeClub = await Club.findById(id)
     if(!existeClub){
@@ -54,5 +63,6 @@ module.exports = {
     existeUsuarioPorId,
     existeEmailClub,
     existeClubPorId,
-    existeTorneoPorId
+    existeTorneoPorId,
+    existeCampeonPorId
 }

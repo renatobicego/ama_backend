@@ -3,7 +3,6 @@ const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete } = require("../c
 const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
 const {existeEmail, esRoleValido, existeUsuarioPorId} = require('../helpers')
-const { tieneRole } = require("../middlewares/validarRoles")
 const { validarJWT } = require("../middlewares/validarJwt")
 
 const router = Router()

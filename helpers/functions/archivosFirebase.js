@@ -6,8 +6,14 @@ const storage = getStorage()
 const subirArchivoFirebase = async(file, refRoute) => {
     // Obtener extension de archivo (en caso de tener más de un punto, usa fileExtension.length - 1)
     const fileExtension = file.name.split('.')
-    // Generar nombre único
-    const newFileName = v4() + '.' + fileExtension[fileExtension.length - 1]
+
+    // Generar nombre único solo si es una foto
+    let newFileName
+    if(['jpg', 'jpeg', 'png'].includes(fileExtension[fileExtension.length - 1])){
+        newFileName = v4() + '.' + fileExtension[fileExtension.length - 1]
+    }else{
+        newFileName = file.name
+    }
 
     // Crear referencia a archivo en Firebase
     const directoryRef = ref(storage, refRoute + newFileName)

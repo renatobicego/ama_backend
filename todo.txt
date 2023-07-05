@@ -1,0 +1,8 @@
+recuperar contraseña
+pagos
+newsletter
+
+front: 
+nuevo form Inscripcion
+form crear cuenta y login
+panel administracion

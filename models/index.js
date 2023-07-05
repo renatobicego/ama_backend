@@ -8,6 +8,7 @@ const Prueba = require('./Prueba')
 const PruebaAtleta = require('./PruebaAtleta')
 const Torneo = require('./Torneo')
 const Categoria = require('./Categoria')
+const Campeon = require('./Campeon')
 
 
 module.exports = {
@@ -20,5 +21,6 @@ module.exports = {
     Prueba,
     PruebaAtleta,
     Torneo,
-    Categoria
+    Categoria,
+    Campeon
 }

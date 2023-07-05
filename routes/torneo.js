@@ -3,12 +3,13 @@ const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
 const { tieneRole } = require("../middlewares/validarRoles")
 const { validarJWT } = require("../middlewares/validarJwt")
-const { torneoPost, torneoGet, torneoPut, torneoDelete } = require("../controllers")
+const { torneoPost, torneoGet, torneoPut, torneoDelete, torneoGetInscripcionActiva } = require("../controllers")
 const { existeTorneoPorId } = require("../helpers")
 
 const router = Router()
 
 router.get('/', torneoGet)
+router.get('/activos', torneoGetInscripcionActiva)
 
 router.put('/:id', [
     check('id', 'No es un ID válido').isMongoId(),
