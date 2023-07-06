@@ -92,7 +92,7 @@ const torneoGetInscripcionActiva = async(req, res) => {
             .populate("pruebasDisponibles", "nombre")
             .populate("categoriasDisponibles", "nombre")
             // Ordenar por fecha
-            .sort({fecha: 'desc'})
+            .sort({fecha: 'asc'})
             .exec()
     ]);
 

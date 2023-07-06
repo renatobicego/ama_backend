@@ -14,7 +14,8 @@ class Server {
             clubPath: '/api/club',
             torneoPath: '/api/torneo',
             informacionTorneosPath: '/api',
-            campeonesPath: '/api/campeones'
+            campeonesPath: '/api/campeones',
+            inscripcionesPath: '/api/inscripciones'
         }
 
         //Base de datos
@@ -51,6 +52,7 @@ class Server {
         this.app.use(this.paths.torneoPath, require('../routes/torneo'))
         this.app.use(this.paths.informacionTorneosPath, require('../routes/informacionTorneos'))
         this.app.use(this.paths.campeonesPath, require('../routes/campeones'))
+        this.app.use(this.paths.inscripcionesPath, require('../routes/inscripciones'))
     }
 
     listen(){
