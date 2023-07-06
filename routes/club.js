@@ -5,6 +5,7 @@ const {check} = require('express-validator')
 const {existeEmailClub, existeClubPorId} = require('../helpers')
 const { tieneRole } = require("../middlewares/validarRoles")
 const { validarJWT } = require("../middlewares/validarJwt")
+const { validarArchivoMiddleware } = require("../middlewares/validarArchivoMiddleware")
 
 const router = Router()
 
@@ -18,7 +19,6 @@ router.put('/:id', [
     check('entrenadores', 'Ingrese al menos un entrenador a cargo').optional().isArray({min: 1}),
     check('email', 'Correo no válido').optional().isEmail(),
     check('email').optional().custom(existeEmailClub),
-    // validarArchivo,
     validarCampos
 ], clubPut)
 
@@ -31,6 +31,7 @@ router.post('/', [
     check('entrenadores.*', 'Ingrese correctamente un entrenador').isMongoId(),
     check('email', 'Correo no válido').isEmail(),
     check('email').custom(existeEmailClub),
+    validarArchivoMiddleware,
     validarCampos
 ], clubPost)
 

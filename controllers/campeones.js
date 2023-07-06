@@ -1,4 +1,5 @@
 const { validarArchivos, subirArchivoFirebase, borrarArchivoFirebase } = require("../helpers")
+const comprimirArchivos = require("../helpers/functions/comprimirArchivos")
 const { Campeon } = require("../models")
 
 
@@ -6,12 +7,20 @@ const campeonPost = async(req, res) => {
 
     // Obtener datos
     const {nombreApellido, pruebasCampeon} = req.body
-    const {img} = req.files
+    let {img} = req.files
 
     // Subir imagen de campeon (validado por middleware que no está vacia)
     validarArchivos(img, res, ['png', 'jepg', 'jpg'])
-    const fbLinkImg = await subirArchivoFirebase(img, 'campeonesImg/')
 
+    // Comprimir y subir archivo
+    let fbLinkImg
+    try {
+        img = await comprimirArchivos(img, 'jpeg')
+        fbLinkImg = await subirArchivoFirebase(img, 'campeonesImg/')
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+    }
+      
     const campeon = new Campeon({nombreApellido, pruebasCampeon, img: fbLinkImg})
     await campeon.save()
 
@@ -19,23 +28,29 @@ const campeonPost = async(req, res) => {
 }
 
 const campeonGet = async(req, res) => {
-    const campeones = await Campeon.find()
+    const campeones = await Campeon.find().populate('pruebasCampeon', 'nombre')
     res.json({campeones})
 }
 
 const campeonPut = async(req, res) => {
     const {id} = req.params
-
     const {_id, ...resto} = req.body
-    const {img} = req.files
-
+    
     // Si cambia la imagen, subir nueva imagen
-    if(img){
+    if(req.files){
+        let {img} = req.files
         validarArchivos(img, res, ['png', 'jepg', 'jpg'])
-        resto.img = await subirArchivoFirebase(img, 'campeonesImg/')
+        try {
+            img = await comprimirArchivos(img, 'jpeg')
+            resto.img = await subirArchivoFirebase(img, 'campeonesImg/')
+        } catch (error) {
+            return res.status(500).json({msg: error.message})   
+        }
+        
     }
 
     const campeon = await Campeon.findByIdAndUpdate(id, resto)
+    
     await borrarArchivoFirebase(campeon.img)
     
     res.json({campeon})

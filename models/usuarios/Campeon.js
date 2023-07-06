@@ -11,6 +11,7 @@ const CampeonSchema = Schema({
     },
     pruebasCampeon: [{
         type: Schema.Types.ObjectId,
+        ref: 'Prueba',
         required: true
     }]
 })

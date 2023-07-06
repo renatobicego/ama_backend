@@ -14,7 +14,7 @@ class Server {
             clubPath: '/api/club',
             torneoPath: '/api/torneo',
             informacionTorneosPath: '/api',
-            campeonesPath: '/api/campeon'
+            campeonesPath: '/api/campeones'
         }
 
         //Base de datos

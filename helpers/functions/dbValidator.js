@@ -1,4 +1,4 @@
-const { Usuario, Role, Club, Torneo } = require("../../models")
+const { Usuario, Role, Club, Torneo, Campeon } = require("../../models")
 
 
 const existeEmail = async(email) => {
@@ -25,7 +25,7 @@ const esRoleValido = async(role = '') => {
 
 const existeUsuarioPorId = async( id ) => {
 
-    // Verificar si el correo existe
+    // Verificar si el usuario existe
     const existeUsuario = await Usuario.findById(id);
     if ( !existeUsuario ) {
         throw new Error(`El usuario con id ${ id } no existe `);

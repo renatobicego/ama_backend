@@ -7,7 +7,7 @@ const subirArchivosTorneoFirebase = async(file, ref, res) => {
     try {
         linkFirebase = await subirArchivoFirebase(file, ref)
     } catch (error) {
-        return res.status(500).json({msg: error})
+        return res.status(500).json({msg: error.message})
     }
     return linkFirebase
 }
@@ -16,7 +16,7 @@ const borrarArchivoTorneoFirebase = async(ref, res) => {
     try {
         await borrarArchivoFirebase(ref)
     } catch (error) {
-        return res.status(500).json({ msg: error })
+        return res.status(500).json({msg: error.message})
     }
 }
 
@@ -32,16 +32,16 @@ const torneoPost = async (req, res) => {
         categoriasDisponibles, 
     } = req.body
 
-    // Subir a firebase resultados si son enviados
+    // Subir a firebase resultados y programa horario si son enviados
     let resultados = ''
-    if(req.files.resultados){
-        resultados = await subirArchivosTorneoFirebase(req.files.resultados, 'archivos/resultadosTorneos/', res)
-    }
-
-    // Subir a firebase programa horario si son enviados
     let programaHorario = ''
-    if(req.files.programaHorario){
-        programaHorario = await subirArchivosTorneoFirebase(req.files.programaHorario, 'archivos/programaHorarioTorneos/', res)
+    if(req.files){
+        if(req.files.resultados){
+            resultados = await subirArchivosTorneoFirebase(req.files.resultados, 'archivos/resultadosTorneos/', res)
+        }
+        if(req.files.programaHorario){
+            programaHorario = await subirArchivosTorneoFirebase(req.files.programaHorario, 'archivos/programaHorarioTorneos/', res)
+        }
     }
 
     const torneo = new Torneo({
@@ -106,20 +106,20 @@ const torneoPut = async(req, res) => {
     const { id } = req.params;
     const { _id, ...resto } = req.body;
 
-    // Subir a firebase resultados si son enviados
-    if(req.files.resultados){
-        resto.resultados = await subirArchivosTorneoFirebase(req.files.resultados, 'archivos/resultadosTorneos/', res)
-    }
-
-    // Subir a firebase programa horario si son enviados
-    if(req.files.programaHorario){
-        resto.programaHorario = await subirArchivosTorneoFirebase(req.files.programaHorario, 'archivos/programaHorarioTorneos/', res)
+    // Subir a firebase resultados y programa horario si son enviados
+    if(req.files){
+        if(req.files.resultados){
+            resto.resultados = await subirArchivosTorneoFirebase(req.files.resultados, 'archivos/resultadosTorneos/', res)
+        }
+        if(req.files.programaHorario){
+            resto.programaHorario = await subirArchivosTorneoFirebase(req.files.programaHorario, 'archivos/programaHorarioTorneos/', res)
+        }
     }
 
     const torneo = await Torneo.findByIdAndUpdate( id, resto )
 
     // Borrar archivos anteriores si usuario lo cambia (Torneo.findByIdAndUpdate retorna valores anteriores al cambio)
-    torneo.resultados & borrarArchivoTorneoFirebase(torneo.resultados, res)
+    torneo.resultados && borrarArchivoTorneoFirebase(torneo.resultados, res)
     torneo.programaHorario && borrarArchivoTorneoFirebase(torneo.programaHorario, res)
 
     res.json(torneo)
@@ -136,7 +136,7 @@ const torneoDelete = async(req, res) => {
     const torneo = await Torneo.findByIdAndDelete( id )
 
     // Borrar archivos (Torneo.findByIdAndDelete retorna valor borrado)
-    torneo.resultados & borrarArchivoTorneoFirebase(torneo.resultados, res)
+    torneo.resultados && borrarArchivoTorneoFirebase(torneo.resultados, res)
     torneo.programaHorario && borrarArchivoTorneoFirebase(torneo.programaHorario, res)
 
     res.json(torneo)
