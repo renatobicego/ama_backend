@@ -45,7 +45,7 @@ const UsuarioSchema = Schema({
     },
     club: {
         type: Schema.Types.ObjectId,
-        ref: 'Club'
+        ref: 'Club',
     },
     pruebasFavoritas: [{
         type: Schema.Types.ObjectId,

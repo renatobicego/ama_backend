@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 
-const ImagenNoticiaSchema = Schema({
+const NoticiaSchema = Schema({
     titulo: {
         type: String,
         required: [true, 'Titulo obligatorio']
@@ -36,4 +36,4 @@ const ImagenNoticiaSchema = Schema({
     }
 })
 
-module.exports = model('ImagenNoticia', ImagenNoticiaSchema)
+module.exports = model('Noticia', NoticiaSchema)

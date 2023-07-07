@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete } = require("../controllers")
+const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete, usuariosGetPorClub } = require("../controllers")
 const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
 const {existeEmail, esRoleValido, existeUsuarioPorId} = require('../helpers')
@@ -8,6 +8,7 @@ const { validarJWT } = require("../middlewares/validarJwt")
 const router = Router()
 
 router.get('/', usuariosGet)
+router.get('/:idClub', usuariosGetPorClub)
 
 router.put('/:id', [
     check('id', 'No es un ID válido').isMongoId(),

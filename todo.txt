@@ -1,6 +1,7 @@
 recuperar contraseña
 pagos
 newsletter
+ruta pruebasFavoritas
 
 front: 
 nuevo form Inscripcion

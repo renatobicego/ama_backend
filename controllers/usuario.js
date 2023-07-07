@@ -87,6 +87,32 @@ const usuariosGet = async(req, res) => {
     });
 }
 
+const usuariosGetPorClub = async(req, res) => {
+
+    const {idClub} = req.params
+    // Query
+    const [ total, usuarios ] = await Promise.all([
+        Usuario.countDocuments(),
+        Usuario.find({club: idClub})
+            .populate("club", "nombre")
+            .populate("federacion", "nombre")
+            .populate("asociacion", "nombre")
+            .populate({
+                path: "pruebasFavoritas",
+                select: ["marca"],
+                populate: {
+                  path: "prueba",
+                  select: ["nombre"],
+                },
+              })
+    ]);
+
+    res.json({
+        total,
+        usuarios
+    });
+}
+
 const usuariosPut = async(req, res) => {
 
     const { id } = req.params;
@@ -138,5 +164,6 @@ module.exports = {
     usuariosPost,
     usuariosGet,
     usuariosPut,
-    usuariosDelete
+    usuariosDelete,
+    usuariosGetPorClub
 }

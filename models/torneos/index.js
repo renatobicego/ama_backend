@@ -5,6 +5,7 @@ const Prueba = require('./Prueba')
 const PruebaAtleta = require('./PruebaAtleta')
 const Torneo = require('./Torneo')
 const Categoria = require('./Categoria')
+const Inscripcion = require('./Inscripcion')
 
 module.exports = {
     Federacion,
@@ -12,5 +13,6 @@ module.exports = {
     Prueba,
     PruebaAtleta,
     Torneo,
-    Categoria
+    Categoria,
+    Inscripcion
 }
