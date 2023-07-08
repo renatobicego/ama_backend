@@ -125,16 +125,6 @@ const usuariosPut = async(req, res) => {
         resto.password = bcryptjs.hashSync( password, salt );
     }
 
-    // Guardar pruebas favoritas
-    const {pruebasFavoritas} = resto
-
-    if(pruebasFavoritas.length > 0){
-        await pruebasFavoritas.forEach(async (prueba) => {
-            const {_id, atleta, ...restoPrueba} = prueba
-            await PruebaAtleta.findByIdAndUpdate(_id, restoPrueba)
-        })
-    }
-
     const usuario = await Usuario.findByIdAndUpdate( id, resto )
 
     res.json(usuario);

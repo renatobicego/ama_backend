@@ -2,6 +2,7 @@ recuperar contraseña
 pagos
 newsletter
 ruta pruebasFavoritas
+definir datos de inscripcion y datos que necesitan en planilla
 
 front: 
 nuevo form Inscripcion

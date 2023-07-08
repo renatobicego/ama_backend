@@ -1,4 +1,4 @@
-const { Usuario, Role, Club, Torneo, Campeon } = require("../../models")
+const { Usuario, Role, Club, Torneo, Campeon, Inscripcion, PruebaAtleta } = require("../../models")
 
 
 const existeEmail = async(email) => {
@@ -19,7 +19,7 @@ const esRoleValido = async(role = '') => {
 
     const existeRole = await Role.findOne({ role });
     if ( !existeRole ) {
-        throw new Error(`El rol ${ role } no está registrado en la BD`);
+        throw new Error(`El rol no está registrado en la BD`);
     }
 }
 
@@ -28,7 +28,7 @@ const existeUsuarioPorId = async( id ) => {
     // Verificar si el usuario existe
     const existeUsuario = await Usuario.findById(id);
     if ( !existeUsuario ) {
-        throw new Error(`El usuario con id ${ id } no existe `);
+        throw new Error(`El usuario no existe `);
     }
 }
 
@@ -37,14 +37,14 @@ const existeCampeonPorId = async( id ) => {
     // Verificar si el correo existe
     const existeCampeon = await Campeon.findById(id);
     if ( !existeCampeon ) {
-        throw new Error(`El campeon con id ${ id } no existe `);
+        throw new Error(`El campeon  no existe `);
     }
 }
 
 const existeClubPorId = async(id) => {
     const existeClub = await Club.findById(id)
     if(!existeClub){
-        throw new Error(`El club con id ${ id } no existe `)
+        throw new Error(`El club no existe `)
     }
 }
 
@@ -55,7 +55,19 @@ const existeTorneoPorId = async(id) => {
     }
 }
 
+const existeInscripcionPorId = async(id) => {
+    const existeInscripcion = await Inscripcion.findById(id)
+    if(!existeInscripcion){
+        throw new Error(`La inscripción con id ${ id } no existe `)
+    }
+}
 
+const existePruebaEnUsuario = async(id) => {
+    const existePruebaRegistradaEnUsuario = await PruebaAtleta.find({prueba: id})
+    if(existePruebaRegistradaEnUsuario){
+        throw new Error('Ya ha registrado como favorita esta prueba. Si lo necesita, edite su marca')
+    }
+}
 
 module.exports = {
     existeEmail,
@@ -64,5 +76,7 @@ module.exports = {
     existeEmailClub,
     existeClubPorId,
     existeTorneoPorId,
-    existeCampeonPorId
+    existeCampeonPorId,
+    existeInscripcionPorId,
+    existePruebaEnUsuario
 }
