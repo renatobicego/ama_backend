@@ -1,8 +1,8 @@
 const { Router } = require("express")
-const { pruebaAtletaPost, pruebaAtletaGetPorAtleta } = require("../controllers/pruebaAtleta")
+const { pruebaAtletaPost, pruebaAtletaGetPorAtleta, pruebaAtletaPut, pruebaAtletaDelete } = require("../controllers/pruebaAtleta")
 const { validarJWT } = require("../middlewares/validarJwt")
 const { check } = require("express-validator")
-const { existeUsuarioPorId, existePruebaEnUsuario } = require("../helpers")
+const { existeUsuarioPorId, existePruebaEnUsuario, existePruebaAtleta } = require("../helpers")
 const { validarCampos } = require("../middlewares/validarCampos")
 
 
@@ -23,5 +23,21 @@ router.post('/', [
     check('marca', 'Ingrese su marca').isLength({min: 2}),
     validarCampos
 ], pruebaAtletaPost)
+
+router.put('/:id', [
+    validarJWT,
+    check('id', 'Prueba de atleta no registrada').isMongoId(),
+    check('id').custom(existePruebaAtleta),
+    check('prueba', 'Prueba no existente').optional().isMongoId(),
+    check('marca', 'Ingrese su marca').optional().isLength({min: 2}),
+    validarCampos
+], pruebaAtletaPut)
+
+router.delete('/:id', [
+    validarJWT,
+    check('id', 'Prueba de atleta no registrada').isMongoId(),
+    check('id').custom(existePruebaAtleta),
+    validarCampos
+], pruebaAtletaDelete)
 
 module.exports = router

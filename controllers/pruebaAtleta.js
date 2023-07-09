@@ -27,7 +27,16 @@ const pruebaAtletaPut = async(req, res) => {
     res.json({pruebaAtleta})
 }
 
+const pruebaAtletaDelete = async(req, res) => {
+    const {id} = req.params
+    const pruebaAtleta = await PruebaAtleta.findByIdAndDelete(id)
+
+    res.json({pruebaAtleta})
+}
+
 module.exports = {
     pruebaAtletaPost,
-    pruebaAtletaGetPorAtleta
+    pruebaAtletaGetPorAtleta,
+    pruebaAtletaPut,
+    pruebaAtletaDelete
 }

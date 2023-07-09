@@ -69,6 +69,13 @@ const existePruebaEnUsuario = async(id) => {
     }
 }
 
+const existePruebaAtleta = async(id) => {
+    const existePruebaAtleta = await PruebaAtleta.findById(id)
+    if(!existePruebaAtleta){
+        throw new Error('La prueba del atleta no se encuentra registrada')
+    }
+}
+
 module.exports = {
     existeEmail,
     esRoleValido,
@@ -78,5 +85,6 @@ module.exports = {
     existeTorneoPorId,
     existeCampeonPorId,
     existeInscripcionPorId,
-    existePruebaEnUsuario
+    existePruebaEnUsuario,
+    existePruebaAtleta
 }
