@@ -1,9 +1,9 @@
 const { response } = require('express');
 const bcryptjs = require('bcryptjs')
 
-const {Usuario} = require('../models');
+const {Usuario} = require('../../models');
 
-const { generarJWT } = require('../helpers')
+const { generarJWT } = require('../../helpers')
 
 const login = async(req, res = response) => {
 

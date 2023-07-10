@@ -16,7 +16,8 @@ class Server {
             informacionTorneosPath: '/api',
             campeonesPath: '/api/campeones',
             inscripcionesPath: '/api/inscripciones',
-            pruebasAtletaPath: '/api/pruebas_atleta'
+            pruebasAtletaPath: '/api/pruebas_atleta',
+            imagenNoticiaPath: '/api/imagen_noticia',
         }
 
         //Base de datos
@@ -55,6 +56,7 @@ class Server {
         this.app.use(this.paths.campeonesPath, require('../routes/campeones'))
         this.app.use(this.paths.inscripcionesPath, require('../routes/inscripciones'))
         this.app.use(this.paths.pruebasAtletaPath, require('../routes/pruebasAtleta'))
+        this.app.use(this.paths.imagenNoticiaPath, require('../routes/imagenNoticia'))
     }
 
     listen(){

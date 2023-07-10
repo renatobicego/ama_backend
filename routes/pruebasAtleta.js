@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const { pruebaAtletaPost, pruebaAtletaGetPorAtleta, pruebaAtletaPut, pruebaAtletaDelete } = require("../controllers/pruebaAtleta")
+const { pruebaAtletaPost, pruebaAtletaGetPorAtleta, pruebaAtletaPut, pruebaAtletaDelete } = require("../controllers")
 const { validarJWT } = require("../middlewares/validarJwt")
 const { check } = require("express-validator")
 const { existeUsuarioPorId, existePruebaEnUsuario, existePruebaAtleta } = require("../helpers")

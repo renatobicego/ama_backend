@@ -1,3 +1,5 @@
+const { borrarArchivoFirebase, validarArchivos, subirArchivoFirebase } = require("../helpers")
+const { ImagenNoticia } = require("../models")
 
 
 const NoticiaPost = async(req, res) => {
@@ -11,5 +13,6 @@ const NoticiaPost = async(req, res) => {
         categoria
     } = req.body
 
+    
     
 }

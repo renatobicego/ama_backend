@@ -13,6 +13,10 @@ const ParrafoSchema = Schema({
     titulo: {
         type: String,
         default: null
+    },
+    orden: {
+        type: Number,
+        required: true
     }
 })
 
