@@ -1,7 +1,7 @@
-const { subirArchivoFirebase, borrarArchivoFirebase } = require('../helpers')
-const {validarArchivos} = require('../helpers')
-const comprimirArchivos = require('../helpers/functions/comprimirArchivos')
-const {Club} = require('../models')
+const { subirArchivoFirebase, borrarArchivoFirebase } = require('../../helpers')
+const {validarArchivos} = require('../../helpers')
+const comprimirArchivos = require('../../helpers/functions/comprimirArchivos')
+const {Club} = require('../../models')
 
 
 const clubPost = async (req, res) => {

@@ -1,4 +1,4 @@
-const { subirArchivoFirebase, borrarArchivoFirebase } = require("../../helpers")
+const { subirArchivoFirebase, borrarArchivoFirebase, validarArchivos } = require("../../helpers")
 const { ImagenNoticia } = require("../../models")
 
 const subirArchivosNoticiaFirebase = async(file, ref, res) => {
@@ -27,7 +27,7 @@ const imagenNoticiaPost = async(req, res) => {
     const {imagen} = req.files
 
     // SUbir imagen a firebase
-    const linkFirebase = await subirArchivosNoticiaFirebase(imagen, '/noticias/images/', res)
+    const linkFirebase = await subirArchivosNoticiaFirebase(imagen, 'images/noticias/', res)
 
     //Crear imagen con epigrafe en la db
     const imgPortada = new ImagenNoticia({url: linkFirebase, epigrafe})
@@ -53,15 +53,15 @@ const imagenNoticiaPut = async(req, res) => {
     //Obtener id
     const {id} = req.params
     const {epigrafe} = req.body
-    const {imagen} = req.files
 
     // Obtener imagen de noticia
     const imgNoticia = await ImagenNoticia.findById(id)
 
     //Acualizar datos si existen
     if(req.files){
+        const {imagen} = req.files
         await borrarArchivoNoticiaFirebase(imgNoticia.url, res)
-        imgNoticia.url = await subirArchivosNoticiaFirebase(imagen, '/noticias/images/', res)
+        imgNoticia.url = await subirArchivosNoticiaFirebase(imagen, 'images/noticias/', res)
     }
     imgNoticia.epigrafe = epigrafe ? epigrafe : imgNoticia.epigrafe
 

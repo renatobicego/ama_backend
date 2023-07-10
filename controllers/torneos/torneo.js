@@ -1,5 +1,5 @@
-const { Torneo } = require('../models')
-const { validarArchivos, subirArchivoFirebase, borrarArchivoFirebase } = require('../helpers')
+const { Torneo } = require('../../models')
+const { validarArchivos, subirArchivoFirebase, borrarArchivoFirebase } = require('../../helpers')
 
 const subirArchivosTorneoFirebase = async(file, ref, res) => {
     validarArchivos(file, res, ['pdf', 'docx', 'doc'])

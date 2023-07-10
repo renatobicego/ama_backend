@@ -1,5 +1,5 @@
-const {Usuario, PruebaAtleta} = require('../models/index')
 const bcrypt = require('bcryptjs')
+const { Usuario, PruebaAtleta } = require('../../models')
 
 const usuariosPost = async (req, res) => {
 

@@ -1,4 +1,4 @@
-const { PruebaAtleta } = require("../models")
+const { PruebaAtleta } = require("../../models")
 
 
 const pruebaAtletaPost = async(req, res) => {
