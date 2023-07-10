@@ -18,6 +18,8 @@ class Server {
             inscripcionesPath: '/api/inscripciones',
             pruebasAtletaPath: '/api/pruebas_atleta',
             imagenNoticiaPath: '/api/imagen_noticia',
+            parrafoNoticiaPath: '/api/parrafo_noticia',
+            noticiaPath: '/api/noticia',
         }
 
         //Base de datos
@@ -57,6 +59,8 @@ class Server {
         this.app.use(this.paths.inscripcionesPath, require('../routes/inscripciones'))
         this.app.use(this.paths.pruebasAtletaPath, require('../routes/pruebasAtleta'))
         this.app.use(this.paths.imagenNoticiaPath, require('../routes/imagenNoticia'))
+        this.app.use(this.paths.parrafoNoticiaPath, require('../routes/parrafo'))
+        this.app.use(this.paths.noticiaPath, require('../routes/noticia'))
     }
 
     listen(){
