@@ -3,11 +3,13 @@ const { validarJWT } = require("../middlewares/validarJwt");
 const { tieneRole } = require("../middlewares/validarRoles");
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validarCampos");
-const { existeParrafoNoticia } = require("../helpers");
-const { noticiaPost, noticiaPut } = require("../controllers");
+const { existeParrafoNoticia, existeNoticia } = require("../helpers");
+const { noticiaPost, noticiaPut, noticiaGet } = require("../controllers");
 
 
 const router = Router()
+
+router.get('/', noticiaGet)
 
 router.post('/', [
     validarJWT,
@@ -33,11 +35,13 @@ router.post('/', [
 router.put('/:id', [
     validarJWT,
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
-    check('id', 'Párrafo no registrado').isMongoId(),
-    check('id').custom(existeParrafoNoticia),
-    check('texto', 'Debe agregar más texto al párrafo').optional().isLength({min: 20}),
+    check('id', 'Noticia no registrada').isMongoId(),
+    check('id').custom(existeNoticia),
+    check('subtitulo', 'Debe agregar más texto al párrafo').optional().isLength({min: 20}),
     check('titulo', 'Debe agregar más texto al título').optional().isLength({min: 10}),
-    check('imagen', 'Error en la imagen').optional().isMongoId(),
+    check('imgPortada', 'Error en la imagen').optional().isMongoId(),
+    check('fecha', 'Fecha incorrecta').optional().isDate({format: 'YYYY-MM-dd'}),
+    check('categoria', 'No existe la categoría seleccionada').optional().isMongoId(),
     validarCampos
 ], noticiaPut)
 
