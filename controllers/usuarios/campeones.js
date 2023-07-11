@@ -10,26 +10,36 @@ const campeonPost = async(req, res) => {
     let {img} = req.files
 
     // Subir imagen de campeon (validado por middleware que no está vacia)
-    validarArchivos(img, res, ['png', 'jepg', 'jpg'])
+    const msg = validarArchivos(img, ['png', 'jepg', 'jpg'])
+    if(msg){
+        return res.status(401).json({msg})
+    }
 
     // Comprimir y subir archivo
     let fbLinkImg
     try {
         img = await comprimirArchivos(img, 'jpeg')
         fbLinkImg = await subirArchivoFirebase(img, 'campeonesImg/')
+        const campeon = new Campeon({nombreApellido, pruebasCampeon, img: fbLinkImg})
+        await campeon.save()
+    
+        return res.json({campeon})
+
     } catch (error) {
         return res.status(500).json({msg: error.message})
     }
       
-    const campeon = new Campeon({nombreApellido, pruebasCampeon, img: fbLinkImg})
-    await campeon.save()
-
-    res.json({campeon})
 }
 
 const campeonGet = async(req, res) => {
-    const campeones = await Campeon.find().populate('pruebasCampeon', 'nombre')
-    res.json({campeones})
+    try {
+        const campeones = await Campeon.find().populate('pruebasCampeon', 'nombre').lean()
+        res.json({campeones})
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
 }
 
 const campeonPut = async(req, res) => {
@@ -39,7 +49,13 @@ const campeonPut = async(req, res) => {
     // Si cambia la imagen, subir nueva imagen
     if(req.files){
         let {img} = req.files
-        validarArchivos(img, res, ['png', 'jepg', 'jpg'])
+
+        // Subir imagen de campeon (validado por middleware que no está vacia)
+        const msg = validarArchivos(img, ['png', 'jepg', 'jpg'])
+        if(msg){
+            return res.status(401).json({msg})
+        }
+
         try {
             img = await comprimirArchivos(img, 'jpeg')
             resto.img = await subirArchivoFirebase(img, 'campeonesImg/')
@@ -49,11 +65,18 @@ const campeonPut = async(req, res) => {
         
     }
 
-    const campeon = await Campeon.findByIdAndUpdate(id, resto)
-    
-    await borrarArchivoFirebase(campeon.img)
-    
-    res.json({campeon})
+    try {
+        const campeon = await Campeon.findByIdAndUpdate(id, resto)
+        
+        await borrarArchivoFirebase(campeon.img)
+        
+        return res.json({campeon})
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})   
+        
+    }
+
 }
 
 const campeonDelete = async(req, res) => {

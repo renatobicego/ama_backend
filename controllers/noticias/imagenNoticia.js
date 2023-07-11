@@ -3,22 +3,21 @@ const comprimirArchivos = require("../../helpers/functions/comprimirArchivos")
 const { ImagenNoticia } = require("../../models")
 
 const subirArchivosNoticiaFirebase = async(file, ref, res) => {
-    validarArchivos(file, res, ['png', 'jpg', 'jpeg'])
-    file = await comprimirArchivos(file, 'jpg')
     let linkFirebase
     try {
+        file = await comprimirArchivos(file, 'jpg')
         linkFirebase = await subirArchivoFirebase(file, ref)
     } catch (error) {
-        return res.status(500).json({msg: error.message})
+        throw new Error(error)
     }
     return linkFirebase
 }
 
-const borrarArchivoNoticiaFirebase = async(ref, res) => {
+const borrarArchivoNoticiaFirebase = async(ref) => {
     try {
         await borrarArchivoFirebase(ref)
     } catch (error) {
-        return res.status(500).json({msg: error.message})
+        throw new Error(error)
     }
 }
 
@@ -28,27 +27,43 @@ const imagenNoticiaPost = async(req, res) => {
     const {epigrafe} = req.body
     const {imagen} = req.files
 
-    // SUbir imagen a firebase
-    const linkFirebase = await subirArchivosNoticiaFirebase(imagen, 'images/noticias/', res)
+    // Validar tamaño y extensión
+    const {msg}= validarArchivos(imagen, ['png', 'jpg', 'jpeg'])
+    if(msg){
+        return res.status(401).json({msg})
+    }
 
-    //Crear imagen con epigrafe en la db
-    const imgPortada = new ImagenNoticia({url: linkFirebase, epigrafe})
-    await imgPortada.save()
-
-    res.json({imgPortada})
+    try {
+        // SUbir imagen a firebase
+        const linkFirebase = await subirArchivosNoticiaFirebase(imagen, 'images/noticias/')
+        //Crear imagen con epigrafe en la db
+        const imgPortada = new ImagenNoticia({url: linkFirebase, epigrafe})
+        await imgPortada.save()
+    
+        return res.json({imgPortada})
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
 }
 
 const imagenNoticiaDelete = async(req, res) => {
     //Obtener id
     const {id} = req.params
 
-    // Eliminar en la db
-    const imgPortada = await ImagenNoticia.findByIdAndDelete(id)
+    try {
+        // Eliminar en la db
+        const imgPortada = await ImagenNoticia.findByIdAndDelete(id)
+    
+        //Eliminar imagen de firebase
+        await borrarArchivoNoticiaFirebase(imgPortada.url)
+    
+        return res.json({imgPortada})
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
 
-    //Eliminar imagen de firebase
-    await borrarArchivoNoticiaFirebase(imgPortada.url, res)
-
-    res.json({imgPortada})
 }
 
 const imagenNoticiaPut = async(req, res) => {
@@ -56,19 +71,32 @@ const imagenNoticiaPut = async(req, res) => {
     const {id} = req.params
     const {epigrafe} = req.body
 
-    // Obtener imagen de noticia
-    const imgNoticia = await ImagenNoticia.findById(id)
+    try {
+        // Obtener imagen de noticia
+        const imgNoticia = await ImagenNoticia.findById(id)
+    
+        //Acualizar datos si existen
+        if(req.files){
+            const {imagen} = req.files
 
-    //Acualizar datos si existen
-    if(req.files){
-        const {imagen} = req.files
-        await borrarArchivoNoticiaFirebase(imgNoticia.url, res)
-        imgNoticia.url = await subirArchivosNoticiaFirebase(imagen, 'images/noticias/', res)
+            // Validar extension y tamaño
+            const msg = validarArchivos(imagen, ['png', 'jpg', 'jpeg'])
+            if(msg){
+                return res.status(401).json({msg})
+            }
+
+            await borrarArchivoNoticiaFirebase(imgNoticia.url)
+            imgNoticia.url = await subirArchivosNoticiaFirebase(imagen, 'images/noticias/')
+        }
+        imgNoticia.epigrafe = epigrafe ? epigrafe : imgNoticia.epigrafe
+    
+        await imgNoticia.save()
+        return res.json({imgNoticia})
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
     }
-    imgNoticia.epigrafe = epigrafe ? epigrafe : imgNoticia.epigrafe
 
-    await imgNoticia.save()
-    res.json({imgNoticia})
 }
 
 module.exports = {

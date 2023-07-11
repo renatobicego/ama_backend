@@ -30,14 +30,13 @@ const login = async(req, res = response) => {
         // Generar el JWT
         const token = await generarJWT( usuario.id );
 
-        res.json({
+        return res.json({
             usuario,
             token
         })
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({
+        return res.status(500).json({
             msg: 'Error en el servidor en el login'
         });
     }   

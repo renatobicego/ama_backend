@@ -60,6 +60,7 @@ const clubGet = async(req, res) => {
         Club.countDocuments(),
         Club.find()
             .populate("entrenadores", ["nombre_apellido", "telefono"])
+            .lean()
     ]);
 
     res.json({

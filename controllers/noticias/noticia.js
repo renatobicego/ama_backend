@@ -13,13 +13,18 @@ const noticiaPost = async(req, res) => {
         categoria
     } = req.body
 
+    try {
+        const noticia = new Noticia({
+            titulo, subtitulo, cuerpo, imgPortada, fecha, categoria, autor: req.usuario._id
+        })
+    
+        await noticia.save()
+        return res.json({noticia})
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
 
-    const noticia = new Noticia({
-        titulo, subtitulo, cuerpo, imgPortada, fecha, categoria, autor: req.usuario._id
-    })
-
-    await noticia.save()
-    res.json({noticia})
     
 }
 
@@ -29,65 +34,89 @@ const noticiaPut = async(req, res) => {
     // Obtener datos de noticia
     const {_id, autor, ...resto} = req.body
 
-    // Actualizar noticia
-    const noticia = await Noticia.findByIdAndUpdate(id, resto)
-    res.json({noticia})
+    try {
+        // Actualizar noticia
+        const noticia = await Noticia.findByIdAndUpdate(id, resto)
+        return res.json({noticia})
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
+
 
 }
 
 const noticiaGet = async(req, res) => {
     // Limitar respuesta
-    const { limite = 10, desde = 0 } = req.query;
+    const { limite = 10, desde = 0 } = req.query
 
-    // Query
-    const [ total, noticias ] = await Promise.all([
-        Noticia.countDocuments(),
-        Noticia.find()
-            .skip( Number( desde ) )
-            .limit(Number( limite ))
-            .populate("imgPortada", "url")
-            .populate("categoria", "nombre")
-    ]);
+    try {
+        // Query
+        const [ total, noticias ] = await Promise.all([
+            Noticia.countDocuments(),
+            Noticia.find()
+                .skip( Number( desde ) )
+                .limit(Number( limite ))
+                .populate("imgPortada", "url")
+                .populate("categoria", "nombre")
+                .lean()
+        ]);
+    
+        return res.json({
+            total,
+            noticias
+        });
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
 
-    res.json({
-        total,
-        noticias
-    });
 }
 
 
 const categoriasGet = async(req, res) => {
     const categorias = await CategoriaNoticia.find()
-    res.json({categorias})
+    return res.json({categorias})
 }
 
 const deleteImagenNoticia = async(id) => {
-    const imgNoticia = await ImagenNoticia.findById(id)
-    await borrarArchivoFirebase(imgNoticia.url)
-    await imgNoticia.remove()
+    const imgNoticia = await ImagenNoticia.findByIdAndDelete(id)
+    try {
+        await borrarArchivoFirebase(imgNoticia.url)
+    } catch (error) {
+        throw new Error(error.message)
+    }
 }
-
+ 
 const noticiaDelete = async(req, res) => {
     // Obtener id de noticia
     const {id} = req.params
 
-    // Borrar noticia
-    const noticia = await Noticia.findByIdAndDelete(id)
+    try {
+        // Borrar noticia
+        const noticia = await Noticia.findByIdAndDelete(id)
+    
+        // Borrar párrafos
+        const arrParrafos = noticia.cuerpo
+        arrParrafos.forEach(async parrafo => {
+            const parrafoBorrado = await Parrafo.findByIdAndDelete(parrafo._id)
+            // Borrar imagen si tiene
+            if(parrafoBorrado.imagen){
+                parrafoBorrado.imagen.forEach(
+                    async id => await deleteImagenNoticia(id, res)
+                )
+            }
+        })
+     
+        //Borrar imagen de portada
+        await deleteImagenNoticia(noticia.imgPortada)
+    
+        return res.json({noticia})
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
 
-    // Borrar párrafos
-    const arrParrafos = noticia.cuerpo
-    arrParrafos.forEach(async parrafo => {
-        const parrafoBorrado = await Parrafo.findByIdAndDelete(parrafo._id)
-        // Borrar imagen si tiene
-        if(parrafoBorrado.imagen){
-            await deleteImagenNoticia(parrafoBorrado.imagen)
-        }
-    })
- 
-    //Borrar imagen de portada
-    await deleteImagenNoticia(noticia.imgPortada)
-
-    res.json({noticia})
 }
 
 module.exports = {

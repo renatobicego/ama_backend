@@ -79,6 +79,7 @@ const usuariosGet = async(req, res) => {
                   select: ["nombre"],
                 },
               })
+            .lean()
     ]);
 
     res.json({
@@ -105,6 +106,7 @@ const usuariosGetPorClub = async(req, res) => {
                   select: ["nombre"],
                 },
               })
+            .lean()
     ]);
 
     res.json({
