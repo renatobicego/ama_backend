@@ -3,8 +3,8 @@ const { validarJWT } = require("../middlewares/validarJwt");
 const { tieneRole } = require("../middlewares/validarRoles");
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validarCampos");
-const { existeParrafoNoticia, existeNoticia, existeNoticia } = require("../helpers");
-const { noticiaPost, noticiaPut, noticiaGet, categoriasGet } = require("../controllers");
+const { existeParrafoNoticia, existeNoticia } = require("../helpers");
+const { noticiaPost, noticiaPut, noticiaGet, categoriasGet, noticiaDelete } = require("../controllers");
 
 
 const router = Router()
@@ -26,13 +26,13 @@ router.post('/', [
 
 ], noticiaPost)
 
-// router.delete('/:id', [
-//     validarJWT,
-//     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
-//     check('id', 'Párrafo no registrado').isMongoId(),
-//     check('id').custom(existeParrafoNoticia),
-//     validarCampos
-// ], parrafoDelete)
+router.delete('/:id', [
+    validarJWT,
+    tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
+    check('id', 'Noticia no registrada').isMongoId(),
+    check('id').custom(existeNoticia),
+    validarCampos
+], noticiaDelete)
 
 router.put('/:id', [
     validarJWT,

@@ -1,8 +1,10 @@
 const { subirArchivoFirebase, borrarArchivoFirebase, validarArchivos } = require("../../helpers")
+const comprimirArchivos = require("../../helpers/functions/comprimirArchivos")
 const { ImagenNoticia } = require("../../models")
 
 const subirArchivosNoticiaFirebase = async(file, ref, res) => {
     validarArchivos(file, res, ['png', 'jpg', 'jpeg'])
+    file = await comprimirArchivos(file, 'jpg')
     let linkFirebase
     try {
         linkFirebase = await subirArchivoFirebase(file, ref)

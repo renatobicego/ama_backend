@@ -55,25 +55,45 @@ const noticiaGet = async(req, res) => {
     });
 }
 
-const noticiaDelete = async(req, res) => {
-    const {id} = req.params
-    
-}
 
 const categoriasGet = async(req, res) => {
     const categorias = await CategoriaNoticia.find()
     res.json({categorias})
 }
 
+const deleteImagenNoticia = async(id) => {
+    const imgNoticia = await ImagenNoticia.findById(id)
+    await borrarArchivoFirebase(imgNoticia.url)
+    await imgNoticia.remove()
+}
+
 const noticiaDelete = async(req, res) => {
     // Obtener id de noticia
     const {id} = req.params
 
+    // Borrar noticia
     const noticia = await Noticia.findByIdAndDelete(id)
-    const arrParrafos = noticia.
+
+    // Borrar párrafos
+    const arrParrafos = noticia.cuerpo
+    arrParrafos.forEach(async parrafo => {
+        const parrafoBorrado = await Parrafo.findByIdAndDelete(parrafo._id)
+        // Borrar imagen si tiene
+        if(parrafoBorrado.imagen){
+            await deleteImagenNoticia(parrafoBorrado.imagen)
+        }
+    })
+ 
+    //Borrar imagen de portada
+    await deleteImagenNoticia(noticia.imgPortada)
+
+    res.json({noticia})
 }
 
 module.exports = {
     noticiaPost,
-    noticiaPut
+    noticiaPut,
+    categoriasGet,
+    noticiaGet,
+    noticiaDelete
 }
