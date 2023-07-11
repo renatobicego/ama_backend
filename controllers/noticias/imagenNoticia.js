@@ -2,7 +2,7 @@ const { subirArchivoFirebase, borrarArchivoFirebase, validarArchivos } = require
 const comprimirArchivos = require("../../helpers/functions/comprimirArchivos")
 const { ImagenNoticia } = require("../../models")
 
-const subirArchivosNoticiaFirebase = async(file, ref, res) => {
+const subirArchivosNoticiaFirebase = async(file, ref) => {
     let linkFirebase
     try {
         file = await comprimirArchivos(file, 'jpg')
@@ -25,16 +25,17 @@ const borrarArchivoNoticiaFirebase = async(ref) => {
 const imagenNoticiaPost = async(req, res) => {
     // Obtener epigrafe e imagen
     const {epigrafe} = req.body
-    const {imagen} = req.files
+    let {imagen} = req.files
 
     // Validar tamaño y extensión
-    const {msg}= validarArchivos(imagen, ['png', 'jpg', 'jpeg'])
+    const msg = validarArchivos(imagen, ['png', 'jpg', 'jpeg'])
     if(msg){
         return res.status(401).json({msg})
     }
 
     try {
         // SUbir imagen a firebase
+        imagen = await comprimirArchivos(imagen, 'jpeg')
         const linkFirebase = await subirArchivosNoticiaFirebase(imagen, 'images/noticias/')
         //Crear imagen con epigrafe en la db
         const imgPortada = new ImagenNoticia({url: linkFirebase, epigrafe})
@@ -77,15 +78,17 @@ const imagenNoticiaPut = async(req, res) => {
     
         //Acualizar datos si existen
         if(req.files){
-            const {imagen} = req.files
+            let {imagen} = req.files
 
             // Validar extension y tamaño
             const msg = validarArchivos(imagen, ['png', 'jpg', 'jpeg'])
             if(msg){
                 return res.status(401).json({msg})
             }
-
             await borrarArchivoNoticiaFirebase(imgNoticia.url)
+
+            imagen = await comprimirArchivos(imagen, 'jpeg')
+
             imgNoticia.url = await subirArchivosNoticiaFirebase(imagen, 'images/noticias/')
         }
         imgNoticia.epigrafe = epigrafe ? epigrafe : imgNoticia.epigrafe

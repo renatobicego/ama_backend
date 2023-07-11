@@ -21,52 +21,60 @@ const clubPost = async (req, res) => {
     // Obtener logo de club
     let {logoImg} = req.files
 
-    // Validad extension y tamaño
-    validarArchivos(logoImg, res, ['jpg', 'jpeg', 'png'])
+    // Validar extension y tamaño
+    const msg = validarArchivos(logoImg, ['jpg', 'jpeg', 'png'])
+    if(msg){
+        return res.status(401).json({msg})
+    }
 
     // Subir a firebase el logo
     let fbLinkImage 
     try {
         logoImg = await comprimirArchivos(logoImg, 'png')
         fbLinkImage = await subirArchivoFirebase(logoImg, 'images/clubes/')
+        const club = new Club({
+            nombre, 
+            email, 
+            ciudad, 
+            entrenadores, 
+            instagram,
+            facebook,
+            twitter,
+            federacion_paga,
+            logoImg: fbLinkImage
+        })
+    
+        //Guardar Db
+        await club.save()
+        return res.json({
+            club
+        })
     } catch (error) {
-        
         return res.status(500).json({msg: error.message})
     }
      
-    const club = new Club({
-        nombre, 
-        email, 
-        ciudad, 
-        entrenadores, 
-        instagram,
-        facebook,
-        twitter,
-        federacion_paga,
-        logoImg: fbLinkImage
-    })
-
-    //Guardar Db
-    await club.save()
-    res.json({
-        club
-    })
 }
 
 const clubGet = async(req, res) => {
 
-    // Query
-    const [ total, clubes ] = await Promise.all([
-        Club.countDocuments(),
-        Club.find()
-            .populate("entrenadores", ["nombre_apellido", "telefono"])
-            .lean()
-    ]);
-
-    res.json({
-        total,
-        clubes
-    });
+    try {
+        // Query
+        const [ total, clubes ] = await Promise.all([
+            Club.countDocuments(),
+            Club.find()
+                .populate("entrenadores", ["nombre_apellido", "telefono"])
+                .lean()
+        ]);
+    
+        return res.json({
+            total,
+            clubes
+        });
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
 }
 
 const clubDelete = async(req, res) => {
@@ -77,16 +85,15 @@ const clubDelete = async(req, res) => {
         return res.status(403).json({ msg: 'Acceso denegado, solo administradores pueden borrar clubes' })
     }
 
-    const club = await Club.findByIdAndDelete( id )
-
-    // Borrar logo
+    // Borrar club y logo
     try {
+        const club = await Club.findByIdAndDelete( id )
         await borrarArchivoFirebase(club.logoImg)
+        res.json(club)
     } catch (error) {
         return res.status(500).json({msg: error.message})
     }
 
-    res.json(club)
 }
 
 const clubPut = async(req, res) => {
@@ -98,8 +105,11 @@ const clubPut = async(req, res) => {
         let fbLinkImage 
         let {logoImg} = req.files
 
-        // Validad extension y tamaño
-        validarArchivos(logoImg, res, ['jpg', 'jpeg', 'png'])
+        // Validar extension y tamaño
+        const msg = validarArchivos(logoImg, ['jpg', 'jpeg', 'png'])
+        if(msg){
+            return res.status(401).json({msg})
+        }
 
         try {
             logoImg = await comprimirArchivos(logoImg, 'png')
@@ -110,18 +120,19 @@ const clubPut = async(req, res) => {
         resto.logoImg = fbLinkImage
     }
 
-    const club = await Club.findByIdAndUpdate( id, resto )
-
-    // Borrar logo anterior si usuario lo cambia (Club.findByIdAndUpdate retorna valores anteriores al update)
-    if ( req.files ){
-        try {
+    try {
+        const club = await Club.findByIdAndUpdate( id, resto )
+        // Borrar logo anterior si usuario lo cambia (Club.findByIdAndUpdate retorna valores anteriores al update)
+        if ( req.files ){
             await borrarArchivoFirebase(club.logoImg)
-        } catch (error) {
-            return res.status(500).json({ msg: error })
         }
+    
+        return res.json(club)
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
     }
 
-    res.json(club)
 } 
 
 module.exports = {

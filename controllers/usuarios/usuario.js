@@ -21,98 +21,116 @@ const usuariosPost = async (req, res) => {
         pruebasFavoritas
     } = req.body
 
-    const usuario = new Usuario({
-        nombre_apellido, 
-        email, 
-        password, 
-        role, 
-        federacion_paga,
-        fecha_nacimiento,
-        telefono,
-        dni,
-        federacion,
-        asociacion,
-        club
-    })
-
-    // Guardar pruebas favoritas
-    let pruebasArr = []
-    if(pruebasFavoritas.length > 0){
-        pruebasArr = await Promise.all(pruebasFavoritas.map(async (prueba) => {
-            const {marca, prueba: pruebaId} = prueba
-            const pruebaAtleta = new PruebaAtleta({marca, atleta: usuario._id, prueba: pruebaId})
-            await pruebaAtleta.save()
-            return pruebaAtleta._id
-        }))
-        usuario.pruebasFavoritas = pruebasArr
+    try {
+        const usuario = new Usuario({
+            nombre_apellido, 
+            email, 
+            password, 
+            role, 
+            federacion_paga,
+            fecha_nacimiento,
+            telefono,
+            dni,
+            federacion,
+            asociacion,
+            club
+        })
+    
+        // Guardar pruebas favoritas
+        let pruebasArr = []
+        if(pruebasFavoritas.length > 0){
+            pruebasArr = await Promise.all(pruebasFavoritas.map(async (prueba) => {
+                const {marca, prueba: pruebaId} = prueba
+                const pruebaAtleta = new PruebaAtleta({marca, atleta: usuario._id, prueba: pruebaId})
+                await pruebaAtleta.save()
+                return pruebaAtleta._id
+            }))
+            usuario.pruebasFavoritas = pruebasArr
+        }
+    
+        //Encriptar contraseña
+        const salt = bcrypt.genSaltSync()
+        usuario.password = bcrypt.hashSync(password, salt)
+    
+        //Guardar Db
+        await usuario.save()
+        return res.json({
+            usuario
+        })
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
     }
 
-    //Encriptar contraseña
-    const salt = bcrypt.genSaltSync()
-    usuario.password = bcrypt.hashSync(password, salt)
-
-    //Guardar Db
-    await usuario.save()
-    res.json({
-        usuario
-    })
 }
 
 const usuariosGet = async(req, res) => {
     // Limitar respuesta
     const { limite = 10, desde = 0 } = req.query;
 
-    // Query
-    const [ total, usuarios ] = await Promise.all([
-        Usuario.countDocuments(),
-        Usuario.find()
-            .skip( Number( desde ) )
-            .limit(Number( limite ))
-            .populate("club", "nombre")
-            .populate("federacion", "nombre")
-            .populate("asociacion", "nombre")
-            .populate({
-                path: "pruebasFavoritas",
-                select: ["marca"],
-                populate: {
-                  path: "prueba",
-                  select: ["nombre"],
-                },
-              })
-            .lean()
-    ]);
+    try {
+        // Query
+        const [ total, usuarios ] = await Promise.all([
+            Usuario.countDocuments(),
+            Usuario.find()
+                .skip( Number( desde ) )
+                .limit(Number( limite ))
+                .populate("club", "nombre")
+                .populate("federacion", "nombre")
+                .populate("asociacion", "nombre")
+                .populate({
+                    path: "pruebasFavoritas",
+                    select: ["marca"],
+                    populate: {
+                      path: "prueba",
+                      select: ["nombre"],
+                    },
+                  })
+                .lean()
+        ]);
+    
+        return res.json({
+            total,
+            usuarios
+        });
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+    }
 
-    res.json({
-        total,
-        usuarios
-    });
 }
 
 const usuariosGetPorClub = async(req, res) => {
 
     const {idClub} = req.params
-    // Query
-    const [ total, usuarios ] = await Promise.all([
-        Usuario.countDocuments(),
-        Usuario.find({club: idClub})
-            .populate("club", "nombre")
-            .populate("federacion", "nombre")
-            .populate("asociacion", "nombre")
-            .populate({
-                path: "pruebasFavoritas",
-                select: ["marca"],
-                populate: {
-                  path: "prueba",
-                  select: ["nombre"],
-                },
-              })
-            .lean()
-    ]);
 
-    res.json({
-        total,
-        usuarios
-    });
+    try {
+        // Query
+        const [ total, usuarios ] = await Promise.all([
+            Usuario.countDocuments(),
+            Usuario.find({club: idClub})
+                .populate("club", "nombre")
+                .populate("federacion", "nombre")
+                .populate("asociacion", "nombre")
+                .populate({
+                    path: "pruebasFavoritas",
+                    select: ["marca"],
+                    populate: {
+                      path: "prueba",
+                      select: ["nombre"],
+                    },
+                  })
+                .lean()
+        ]);
+    
+        return res.json({
+            total,
+            usuarios
+        });
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+    }
 }
 
 const usuariosPut = async(req, res) => {
@@ -120,16 +138,22 @@ const usuariosPut = async(req, res) => {
     const { id } = req.params;
     const { _id, password, ...resto } = req.body;
 
-    // Si usuario quiere cambiar contraseña
-    if ( password ) {
-        // Encriptar la contraseña
-        const salt = bcryptjs.genSaltSync();
-        resto.password = bcryptjs.hashSync( password, salt );
+    try {
+        // Si usuario quiere cambiar contraseña
+        if ( password ) {
+            // Encriptar la contraseña
+            const salt = bcryptjs.genSaltSync();
+            resto.password = bcryptjs.hashSync( password, salt );
+        }
+    
+        const usuario = await Usuario.findByIdAndUpdate( id, resto )
+    
+        return res.json(usuario)
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
     }
-
-    const usuario = await Usuario.findByIdAndUpdate( id, resto )
-
-    res.json(usuario);
 }
 
 const usuariosDelete = async(req, res = response) => {
@@ -141,13 +165,20 @@ const usuariosDelete = async(req, res = response) => {
         return res.status(403).json({ msg: 'Acceso denegado, solo administradores pueden borrar usuarios' });
     }
 
-    const usuario = await Usuario.findByIdAndDelete( id )
+    try {
+        const usuario = await Usuario.findByIdAndDelete( id )
+    
+        await usuario.pruebasFavoritas.forEach(async (prueba) => {
+            await PruebaAtleta.findByIdAndDelete(prueba._id)
+        })
+    
+        return res.json(usuario)
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
 
-    await usuario.pruebasFavoritas.forEach(async (prueba) => {
-        await PruebaAtleta.findByIdAndDelete(prueba._id)
-    })
-
-    res.json(usuario);
 }
 
 

@@ -3,7 +3,7 @@ const sharp = require("sharp")
 
 const comprimirArchivos = async(file, formato) => {
     await sharp(file.data)
-        .toFormat(formato, {quality: 60})
+        .toFormat(formato, {quality: 75})
         .toBuffer()
         .then(data => { 
             file.data = data
