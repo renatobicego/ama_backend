@@ -35,7 +35,21 @@ const noticiaPut = async(req, res) => {
 
 }
 
+const categoriasGet = async(req, res) => {
+    const categorias = await CategoriaNoticia.find()
+    res.json({categorias})
+}
+
+const noticiaDelete = async(req, res) => {
+    // Obtener id de noticia
+    const {id} = req.params
+
+    const noticia = await Noticia.findByIdAndDelete(id)
+    const arrParrafos = noticia.
+}
+
 module.exports = {
     noticiaPost,
-    noticiaPut
+    noticiaPut,
+    categoriasGet
 }

@@ -1,4 +1,4 @@
-const { Usuario, Role, Club, Torneo, Campeon, Inscripcion, PruebaAtleta, ImagenNoticia, Parrafo } = require("../../models")
+const { Usuario, Role, Club, Torneo, Campeon, Inscripcion, PruebaAtleta, ImagenNoticia, Parrafo, Noticia } = require("../../models")
 
 
 const existeEmail = async(email) => {
@@ -90,6 +90,13 @@ const existeParrafoNoticia = async(id) => {
     }
 }
 
+const existeNoticia = async(id) => {
+    const existeNoticia = await Noticia.findById(id)
+    if(!existeNoticia){
+        throw new Error('La noticia no se encuentra registrado')
+    }
+}
+
 module.exports = {
     existeEmail,
     esRoleValido,
@@ -102,5 +109,6 @@ module.exports = {
     existePruebaEnUsuario,
     existePruebaAtleta,
     existeImagenNoticia,
-    existeParrafoNoticia
+    existeParrafoNoticia,
+    existeNoticia
 }
