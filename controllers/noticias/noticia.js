@@ -35,6 +35,31 @@ const noticiaPut = async(req, res) => {
 
 }
 
+const noticiaGet = async(req, res) => {
+    // Limitar respuesta
+    const { limite = 10, desde = 0 } = req.query;
+
+    // Query
+    const [ total, noticias ] = await Promise.all([
+        Noticia.countDocuments(),
+        Noticia.find()
+            .skip( Number( desde ) )
+            .limit(Number( limite ))
+            .populate("imgPortada", "url")
+            .populate("categoria", "nombre")
+    ]);
+
+    res.json({
+        total,
+        noticias
+    });
+}
+
+const noticiaDelete = async(req, res) => {
+    const {id} = req.params
+    
+}
+
 const categoriasGet = async(req, res) => {
     const categorias = await CategoriaNoticia.find()
     res.json({categorias})
@@ -50,6 +75,5 @@ const noticiaDelete = async(req, res) => {
 
 module.exports = {
     noticiaPost,
-    noticiaPut,
-    categoriasGet
+    noticiaPut
 }
