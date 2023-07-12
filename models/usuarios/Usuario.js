@@ -1,4 +1,6 @@
 const {Schema, model} = require('mongoose')
+const bcrypt = require('bcryptjs')
+const bcryptSalt = process.env.BCRYPT_SALT
 
 const UsuarioSchema = Schema({
     nombre_apellido: {
@@ -33,7 +35,8 @@ const UsuarioSchema = Schema({
     },
     dni: {
         type: String,
-        required: [true, 'DNI obligatorio']
+        required: [true, 'DNI obligatorio'],
+        unique: true
     },
     federacion: {
         type: Schema.Types.ObjectId,
@@ -52,6 +55,15 @@ const UsuarioSchema = Schema({
         ref: 'PruebaAtleta'
     }]
 })
+
+UsuarioSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+      return next();
+    }
+    const hash = await bcrypt.hash(this.password, Number(bcryptSalt));
+    this.password = hash;
+    next();
+  })
 
 UsuarioSchema.methods.toJSON = function() {
     const {__v, password, _id, ...user} = this.toObject()

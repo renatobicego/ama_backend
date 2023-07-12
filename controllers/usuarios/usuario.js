@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs')
 const { Usuario, PruebaAtleta } = require('../../models')
 
 const usuariosPost = async (req, res) => {
@@ -47,10 +46,6 @@ const usuariosPost = async (req, res) => {
             }))
             usuario.pruebasFavoritas = pruebasArr
         }
-    
-        //Encriptar contraseña
-        const salt = bcrypt.genSaltSync()
-        usuario.password = bcrypt.hashSync(password, salt)
     
         //Guardar Db
         await usuario.save()
@@ -138,16 +133,8 @@ const usuariosPut = async(req, res) => {
     const { id } = req.params;
     const { _id, password, ...resto } = req.body;
 
-    try {
-        // Si usuario quiere cambiar contraseña
-        if ( password ) {
-            // Encriptar la contraseña
-            const salt = bcryptjs.genSaltSync();
-            resto.password = bcryptjs.hashSync( password, salt );
-        }
-    
+    try {   
         const usuario = await Usuario.findByIdAndUpdate( id, resto )
-    
         return res.json(usuario)
         
     } catch (error) {
