@@ -7,13 +7,12 @@ const sendEmail = async (email, subject, payload, template) => {
   try {
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
-        // host: "smtp.mailtrap.io",
-        // port: 2525,
-        // auth: {
-        //   user: "1a2b3c4d5e6f7g",
-        //   pass: "1a2b3c4d5e6f7g"
-        // }
-        jsonTransport: true
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
+        auth: {
+          user: process.env.USER_MAILTRAP,
+          pass: process.env.PASSWORD_MAILTRAP
+        }
     });
 
     const source = fs.readFileSync(path.join(__dirname, template), "utf8");

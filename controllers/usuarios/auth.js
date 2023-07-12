@@ -1,10 +1,12 @@
 const { response } = require('express');
-const bcryptjs = require('bcryptjs')
+const bcrypt = require('bcryptjs')
 const bcryptSalt = process.env.BCRYPT_SALT
+const crypto = require('crypto')
 
 const {Usuario, Token} = require('../../models');
 
-const { generarJWT } = require('../../helpers')
+const { generarJWT } = require('../../helpers');
+const sendEmail = require('../../utils/emails/sendEmail');
 
 const login = async(req, res = response) => {
 
@@ -77,7 +79,7 @@ const passwordResetRequest = async(req, res) => {
         usuario.email,
         "Password Reset Request",
         {nombre: usuario.nombre_apellido,link: link},
-        "./template/passwordResetRequest.handlebars"
+        "./passwordReset/passwordResetRequest.handlebars"
         )
         
     return res.json({link})
@@ -85,34 +87,45 @@ const passwordResetRequest = async(req, res) => {
 }
 
 const passwordReset = async(req, res) => {
-    let passwordResetToken = await Token.findOne({ userId });
-  if (!passwordResetToken) {
-    throw new Error("Invalid or expired password reset token");
-  }
-  const isValid = await bcrypt.compare(token, passwordResetToken.token);
-  if (!isValid) {
-    throw new Error("Invalid or expired password reset token");
-  }
-  const hash = await bcrypt.hash(password, Number(bcryptSalt));
-  await User.updateOne(
-    { _id: userId },
-    { $set: { password: hash } },
-    { new: true }
-  );
-  const user = await User.findById({ _id: userId });
-  sendEmail(
-    user.email,
-    "Password Reset Successfully",
-    {
-      name: user.name,
-    },
-    "./template/resetPassword.handlebars"
-  );
-  await passwordResetToken.deleteOne();
-  return true;
+    const {usuario, token, password} = req.body
+    // Obtener token de reseteo de contraseña
+    let passwordResetToken = await Token.findOne({ usuario });
+
+    // Verificar si existe y si es válido
+    if (!passwordResetToken) {
+        return res.status(400).json({msg: "Token de restablecimiento de contraseña no válido o caducado"})
+    }
+    const tokenValido = await bcrypt.compare(token, passwordResetToken.token)
+    if (!tokenValido) {
+        return res.status(400).json({msg: "Token de restablecimiento de contraseña no válido o caducado"})
+    }
+
+    // Encriptar contraseña y guardar
+    const hash = await bcrypt.hash(password, Number(bcryptSalt));
+    await Usuario.updateOne(
+        { _id: usuario },
+        { $set: { password: hash } },
+        { new: true }
+    )
+
+    // Mail de confirmación
+    const usuarioDb = await Usuario.findById(usuario);
+    sendEmail(
+        usuarioDb.email,
+        "Contraseña reestablecida correctamente",
+        {
+        nombre: usuarioDb.nombre_apellido,
+        },
+        "./passwordReset/passwordResetSuccessful.handlebars"
+    );
+    await passwordResetToken.deleteOne()
+
+    return res.json({usuarioDb})
 }
 
 
 module.exports = {
-    login
+    login,
+    passwordReset,
+    passwordResetRequest
 }

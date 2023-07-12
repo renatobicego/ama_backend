@@ -40,19 +40,23 @@ const UsuarioSchema = Schema({
     },
     federacion: {
         type: Schema.Types.ObjectId,
-        ref: 'Federacion'
+        ref: 'Federacion',
+        default: null
     },
     asociacion: {
         type: Schema.Types.ObjectId,
-        ref: 'Asociacion'
+        ref: 'Asociacion',
+        default: null
     },
     club: {
         type: Schema.Types.ObjectId,
         ref: 'Club',
+        default: null
     },
     pruebasFavoritas: [{
         type: Schema.Types.ObjectId,
-        ref: 'PruebaAtleta'
+        ref: 'PruebaAtleta',
+        default: []
     }]
 })
 
