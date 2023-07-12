@@ -4,14 +4,23 @@ const { tieneRole } = require("../middlewares/validarRoles");
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validarCampos");
 const { existeParrafoNoticia, existeNoticia } = require("../helpers");
-const { noticiaPost, noticiaPut, noticiaGet, categoriasGet, noticiaDelete } = require("../controllers");
+const { noticiaPost, noticiaPut, noticiaGet, categoriasGet, noticiaDelete, noticiaGetPorId, noticiaGetPorCategoria } = require("../controllers");
 
 
 const router = Router()
 
 router.get('/', noticiaGet)
+router.get('/:id', [
+    check('id', 'Noticia no registrada').isMongoId(),
+    check('id').custom(existeNoticia),
+    validarCampos
+], noticiaGetPorId)
 
 router.get('/categorias', categoriasGet)
+router.get('/noticias_recomendadas/:id', [
+    check('id', 'Categoría no registrada').isMongoId(),
+    validarCampos
+], noticiaGetPorCategoria)
 
 router.post('/', [
     validarJWT,

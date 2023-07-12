@@ -73,6 +73,60 @@ const noticiaGet = async(req, res) => {
 
 }
 
+const noticiaGetPorCategoria = async(req, res) => {
+        // Obtener id categoria
+        const {id} = req.params
+
+        // Limitar respuesta
+        const { limite = 3, desde = 0 } = req.query
+
+        try {
+            // Query
+            const noticias  = await Noticia.find({categoria: id})
+                    .skip( Number( desde ) )
+                    .limit(Number( limite ))
+                    .populate("imgPortada", "url")
+                    .populate("categoria", "nombre")
+                    .lean()
+        
+            return res.json({
+                noticias
+            });
+            
+        } catch (error) {
+            return res.status(500).json({ msg: error.message })
+        }
+}
+
+const noticiaGetPorId = async(req, res) => {
+    // Obtener id 
+    const {id} = req.params
+
+    try {
+        // Query
+        const noticia  = await Noticia.find({_id: id})
+                .populate("imgPortada", ["url", "epigrafe"])
+                .populate("categoria", "nombre")
+                .populate("autor", "nombre_apellido")
+                .populate({
+                    path: "cuerpo",
+                    select: ["titulo", "texto", "orden"],
+                    populate: {
+                      path: "imagen",
+                      select: ["url", "epigrafe"],
+                    },
+                  })
+                .lean()
+    
+        return res.json({
+            noticia
+        });
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
+}
+
 
 const categoriasGet = async(req, res) => {
     const categorias = await CategoriaNoticia.find()
@@ -124,5 +178,7 @@ module.exports = {
     noticiaPut,
     categoriasGet,
     noticiaGet,
-    noticiaDelete
+    noticiaDelete,
+    noticiaGetPorCategoria,
+    noticiaGetPorId
 }
