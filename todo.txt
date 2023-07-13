@@ -1,7 +1,8 @@
-recuperar contraseña
 pagos
 newsletter
 definir datos de inscripcion y datos que necesitan en planilla
+editar uml
+
 
 front: 
 nuevo form Inscripcion

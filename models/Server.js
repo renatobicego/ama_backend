@@ -6,7 +6,7 @@ const fileUpload = require('express-fileupload')
 class Server {
     constructor(){
         this.app = express()
-        this.port = process.env.PORT
+        this.port = process.env.PUERTO
 
         this.paths = {
             usuariosPath: '/api/usuarios',
@@ -67,6 +67,10 @@ class Server {
         this.app.listen(this.port, () => {
             console.log('Corriendo');
         })
+    }
+
+    getApp(){
+        return this.app
     }
 }
 

@@ -1,0 +1,3 @@
+Noticias
+Solo administradores y editores pueden escribir noticias 
+
