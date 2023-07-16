@@ -23,7 +23,7 @@ const login = async(req, res = response) => {
         }
 
         // Verificar la contraseña
-        const validPassword = bcryptjs.compareSync( password, usuario.password );
+        const validPassword = bcrypt.compareSync( password, usuario.password );
         if ( !validPassword ) {
             return res.status(400).json({
                 msg: 'Usuario / Password no son correctos - password'
@@ -40,7 +40,8 @@ const login = async(req, res = response) => {
 
     } catch (error) {
         return res.status(500).json({
-            msg: 'Error en el servidor en el login'
+            msg: 'Error en el servidor en el login',
+            error: error.message
         });
     }   
 

@@ -10,14 +10,15 @@ const usuariosPost = async (req, res) => {
         email, 
         password, 
         role, 
+        pais,
+        sexo,
         federacion_paga,
         fecha_nacimiento,
         telefono,
         dni,
         federacion,
         asociacion,
-        club,
-        pruebasFavoritas
+        club
     } = req.body
 
     try {
@@ -26,6 +27,8 @@ const usuariosPost = async (req, res) => {
             email, 
             password, 
             role, 
+            pais,
+            sexo,
             federacion_paga,
             fecha_nacimiento,
             telefono,
@@ -34,18 +37,6 @@ const usuariosPost = async (req, res) => {
             asociacion,
             club
         })
-    
-        // Guardar pruebas favoritas
-        let pruebasArr = []
-        if(pruebasFavoritas.length > 0){
-            pruebasArr = await Promise.all(pruebasFavoritas.map(async (prueba) => {
-                const {marca, prueba: pruebaId} = prueba
-                const pruebaAtleta = new PruebaAtleta({marca, atleta: usuario._id, prueba: pruebaId})
-                await pruebaAtleta.save()
-                return pruebaAtleta._id
-            }))
-            usuario.pruebasFavoritas = pruebasArr
-        }
     
         //Guardar Db
         await usuario.save()
@@ -93,6 +84,29 @@ const usuariosGet = async(req, res) => {
         return res.status(500).json({msg: error.message})
     }
 
+}
+
+const usuarioGetPorId = async(req, res) => {
+    const {id} = req.params
+    try {
+        
+        const usuario = await Usuario.findById(id)
+                .populate("club", "nombre")
+                .populate("federacion", "nombre")
+                .populate("asociacion", "nombre")
+                .populate({
+                    path: "pruebasFavoritas",
+                    select: ["marca"],
+                    populate: {
+                    path: "prueba",
+                    select: ["nombre"],
+                    },
+                })
+                .lean()
+        res.json({usuario})
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+    }
 }
 
 const usuariosGetPorClub = async(req, res) => {
@@ -175,5 +189,6 @@ module.exports = {
     usuariosGet,
     usuariosPut,
     usuariosDelete,
-    usuariosGetPorClub
+    usuariosGetPorClub,
+    usuarioGetPorId
 }

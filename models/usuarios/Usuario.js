@@ -38,6 +38,14 @@ const UsuarioSchema = Schema({
         required: [true, 'DNI obligatorio'],
         unique: true
     },
+    pais: {
+        type: String,
+        required: [true, 'País obligatorio']
+    },
+    sexo: {
+        type: String,
+        required: [true, 'Sexo obligatorio']
+    },
     federacion: {
         type: Schema.Types.ObjectId,
         ref: 'Federacion',

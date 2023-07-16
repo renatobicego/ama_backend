@@ -97,6 +97,13 @@ const existeNoticia = async(id) => {
     }
 }
 
+const existeUsuarioPorDni = async(dni) => {
+    const existeUsuario = await Usuario.findOne({dni})
+    if(existeUsuario){
+        throw new Error(`El usuario con DNI ${dni} se encuentra registrado`)
+    }
+}
+
 module.exports = {
     existeEmail,
     esRoleValido,
@@ -110,5 +117,6 @@ module.exports = {
     existePruebaAtleta,
     existeImagenNoticia,
     existeParrafoNoticia,
-    existeNoticia
+    existeNoticia,
+    existeUsuarioPorDni
 }
