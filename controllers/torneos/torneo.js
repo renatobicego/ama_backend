@@ -30,6 +30,7 @@ const torneoPost = async (req, res) => {
         fecha, 
         pruebasDisponibles, 
         categoriasDisponibles, 
+        lugar
     } = req.body
 
     try {
@@ -59,6 +60,7 @@ const torneoPost = async (req, res) => {
         const torneo = new Torneo({
             nombre, 
             fecha, 
+            lugar,
             pruebasDisponibles, 
             categoriasDisponibles,
             resultados: resultadosLink,

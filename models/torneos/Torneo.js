@@ -5,6 +5,10 @@ const TorneoSchema = Schema({
         type: String,
         required: [true, 'El nombre es obligatorio']
     },
+    lugar: {
+        type: String,
+        required: [true, 'El lugar es obligatorio']
+    },
     fecha: {
         type: Date,
         required: [true, 'La fecha es obligatoria']

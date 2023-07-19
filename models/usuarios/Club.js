@@ -5,10 +5,9 @@ const ClubSchema = Schema({
         type: String,
         required: [true, 'Nombre obligatorio']
     },
-    email: {
+    siglas: {
         type: String,
-        required: [true, 'Email obligatorio'],
-        unique: true
+        required: [true, 'Siglas obligatorias']
     },
     logoImg: {
         type: String,
@@ -17,10 +16,6 @@ const ClubSchema = Schema({
     ciudad: {
         type: String,
         required: true
-    },
-    federacion_paga: {
-        type: Boolean,
-        default: false
     },
     instagram: {
         type: String,

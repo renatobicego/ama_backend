@@ -8,7 +8,7 @@ const functions = require('firebase-functions')
 const firebaseApp = initializeApp(firebaseConfig)
 const server = new Server()
 
-server.listen()
+//server.listen()
 
 exports.app = functions.https.onRequest(server.getApp())
 

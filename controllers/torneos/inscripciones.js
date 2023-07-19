@@ -30,7 +30,28 @@ const inscripcionGetPorTorneo = async(req, res) => {
           Inscripcion.countDocuments(),
           Inscripcion.find({torneo: idTorneo})
               .populate("torneo", "nombre")
-              .populate("atleta", "nombre_apellido")
+              .populate({
+                path: "atleta",
+                select: [
+                  "nombre_apellido", 
+                  "fecha_nacimiento",
+                  "dni",
+                  "pais",
+                  "sexo"
+                ],
+                populate: {
+                  path: "federacion",
+                  select: ["siglas"],
+                },
+                populate: {
+                  path: "asociacion",
+                  select: ["siglas"],
+                },
+                populate: {
+                  path: "club",
+                  select: ["siglas"],
+                },
+              })
               .populate("categoria", "nombre")
               // Mostrar las pruebas inscripto junto a la marca
               .populate({

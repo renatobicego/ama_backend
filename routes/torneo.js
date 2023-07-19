@@ -24,6 +24,7 @@ router.post('/', [
     validarJWT,
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
     check('nombre', 'Nombre obligatorio').not().isEmpty(),
+    check('lugar', 'Lugar obligatorio').not().isEmpty(),
     check('fecha', 'Fecha de nacimiento obligatoria').isDate({format: 'YYYY-MM-dd'}),
     check('pruebasDisponibles', 'Ingrese al menos una prueba al torneo').isArray({min: 1}),
     check('categoriasDisponibles', 'Ingrese al menos una categoria al torneo').isArray({min: 1}),

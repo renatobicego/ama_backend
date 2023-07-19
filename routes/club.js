@@ -27,6 +27,7 @@ router.post('/', [
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE', 'ENTRENADOR_ROLE'),
     check('nombre', 'Nombre de club obligatorio').not().isEmpty(),
     check('ciudad', 'Ciudad/Departamento obligatorio').not().isEmpty(),
+    check('siglas', 'Siglas obligatorias').not().isEmpty(),
     check('entrenadores', 'Ingrese al menos un entrenador a cargo').isArray({min: 1}),
     check('entrenadores.*', 'Ingrese correctamente un entrenador').isMongoId(),
     check('email', 'Correo no válido').isEmail(),

@@ -6,7 +6,7 @@ const ParrafoSchema = Schema({
         type: String,
         required: [true, 'Texto obligatorio']
     },
-    imagen: [{
+    imagenes: [{
         type: Schema.Types.ObjectId,
         ref: 'ImagenNoticia'
     }],

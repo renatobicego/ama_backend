@@ -21,10 +21,6 @@ const UsuarioSchema = Schema({
         default: 'USER_ROLE',
         emun: ['ADMIN_ROLE', 'USER_ROLE', 'ENTRENADOR_ROLE', 'EDITOR_ROLE']
     },
-    federacion_paga: {
-        type: Boolean,
-        default: false
-    },
     fecha_nacimiento: {
         type: Date,
         required: [true, 'Fecha de nacimiento obligatoria']

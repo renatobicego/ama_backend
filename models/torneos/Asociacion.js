@@ -4,6 +4,10 @@ const AsociacionSchema = Schema({
     nombre: {
         type: String,
         required: [true, 'El nombre de la asociación es obligatorio']
+    },
+    siglas: {
+        type: String,
+        required: [true, 'Siglas de la asociación es obligatoria']
     }
 })
 

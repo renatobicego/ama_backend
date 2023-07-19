@@ -7,15 +7,13 @@ const {Club} = require('../../models')
 const clubPost = async (req, res) => {
 
     let {
-        nombre, 
-        email, 
+        nombre,
         ciudad, 
         entrenadores, 
         instagram,
         facebook,
         twitter,
-        federacion_paga
-
+        siglas
     } = req.body
 
     // Obtener logo de club
@@ -34,14 +32,13 @@ const clubPost = async (req, res) => {
         fbLinkImage = await subirArchivoFirebase(logoImg, 'images/clubes/')
         const club = new Club({
             nombre, 
-            email, 
             ciudad, 
             entrenadores, 
             instagram,
             facebook,
             twitter,
-            federacion_paga,
-            logoImg: fbLinkImage
+            logoImg: fbLinkImage,
+            siglas
         })
     
         //Guardar Db
