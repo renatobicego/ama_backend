@@ -20,7 +20,7 @@ router.post('/', [
     check('atleta').custom(existeUsuarioPorId),
     check('prueba', 'Prueba no existente').isMongoId(),
     check('prueba').custom(existePruebaEnUsuario),
-    check('marca', 'Ingrese su marca').isLength({min: 2}),
+    check('marca', 'Ingrese su marca').optional().isLength({min: 5}),
     validarCampos
 ], pruebaAtletaPost)
 

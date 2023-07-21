@@ -63,9 +63,9 @@ const existeInscripcionPorId = async(id) => {
 }
 
 const existePruebaEnUsuario = async(id) => {
-    const existePruebaRegistradaEnUsuario = await PruebaAtleta.find({prueba: id})
+    const existePruebaRegistradaEnUsuario = await PruebaAtleta.findOne({prueba: id})
     if(existePruebaRegistradaEnUsuario){
-        throw new Error('Ya ha registrado como favorita esta prueba. Si lo necesita, edite su marca')
+        await existePruebaRegistradaEnUsuario.deleteOne()
     }
 }
 

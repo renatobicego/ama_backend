@@ -34,28 +34,6 @@ const torneoPost = async (req, res) => {
     } = req.body
 
     try {
-        // Subir a firebase resultados y programa horario si son enviados
-        let resultadosLink = ''
-        let programaHorarioLink = ''
-        if(req.files){
-            const {resultados, programaHorario} = req.files
-            if(resultados){
-                // Validar tamaño y extensión
-                const msg = validarArchivos(resultados, ['pdf', 'docx', 'doc'])
-                if(msg){
-                    return res.status(401).json({msg})
-                }
-                resultadosLink = await subirArchivosTorneoFirebase(resultados, 'archivos/resultadosTorneos/')
-            }
-            if(programaHorario){
-                // Validar tamaño y extensión
-                const msg = validarArchivos(programaHorario, ['pdf', 'docx', 'doc'])
-                if(msg){
-                    return res.status(401).json({msg})
-                }
-                programaHorarioLink = await subirArchivosTorneoFirebase(programaHorario, 'archivos/programaHorarioTorneos/')
-            }
-        }
     
         const torneo = new Torneo({
             nombre, 
@@ -63,8 +41,6 @@ const torneoPost = async (req, res) => {
             lugar,
             pruebasDisponibles, 
             categoriasDisponibles,
-            resultados: resultadosLink,
-            programaHorario: programaHorarioLink
         })
         
         //Guardar Db
@@ -136,7 +112,7 @@ const torneoGetInscripcionActiva = async(req, res) => {
 
 const torneoPut = async(req, res) => {
     const { id } = req.params;
-    const { _id, ...resto } = req.body;
+    const { _id, ...resto } = req.body
 
     try {
         // Subir a firebase resultados y programa horario si son enviados
