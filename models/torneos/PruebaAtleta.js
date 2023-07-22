@@ -30,6 +30,8 @@ PruebaAtletaSchema.pre('save', async function (next) {
         this.marca = '99.99.99';
       } else if (tipoPrueba.tipo === 'P') {
         this.marca = '99.99' 
+      } else if (tipoPrueba.tipo === 'S') {
+        this.marca = '0.00' 
       }
 
   

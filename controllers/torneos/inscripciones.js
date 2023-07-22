@@ -1,3 +1,4 @@
+const { AsyncParser } = require("json2csv")
 const {Inscripcion} = require("../../models")
 
 
@@ -37,20 +38,22 @@ const inscripcionGetPorTorneo = async(req, res) => {
                   "fecha_nacimiento",
                   "dni",
                   "pais",
-                  "sexo"
+                  "sexo",
                 ],
-                populate: {
-                  path: "federacion",
-                  select: ["siglas"],
-                },
-                populate: {
-                  path: "asociacion",
-                  select: ["siglas"],
-                },
-                populate: {
-                  path: "club",
-                  select: ["siglas"],
-                },
+                populate: [
+                  {
+                    path: "federacion",
+                    select: ["siglas"],
+                  },
+                  {
+                    path: "asociacion",
+                    select: ["siglas"],
+                  },
+                  {
+                    path: "club",
+                    select: ["siglas"],
+                  },
+                ],
               })
               .populate("categoria", "nombre")
               // Mostrar las pruebas inscripto junto a la marca
@@ -64,8 +67,58 @@ const inscripcionGetPorTorneo = async(req, res) => {
                 })
               .lean()
       ])
+
+      // Crea un nuevo array para almacenar los datos desglosados por cada inscripción.
+      let newData = [];
+
+      inscripciones.forEach((item) => {
+        const { pruebasInscripto, ...inscripcionData } = item // Extrae los datos del atleta y las pruebas inscritas.
+        const {atleta} = item
+        const fecha = new Date(atleta.fecha_nacimiento)
+        const dia = fecha.getDate()
+        const mes = fecha.getMonth() + 1 
+        const anio = fecha.getFullYear()
+
+        // Para cada prueba inscrita, crea una nueva fila con los datos del atleta y los detalles de la prueba.
+        pruebasInscripto.forEach((prueba) => {
+          const newRow = {
+            ...inscripcionData,
+            dia,
+            mes,
+            anio,
+            prueba: prueba.prueba.nombre,
+            marca: prueba.marca
+            // Agrega aquí otros campos específicos de la prueba que desees incluir en el CSV.
+          }
+          newData.push(newRow)
+        })
+      })
+
+      const csvOpts = {
+        fields: [
+          'categoria.nombre',
+          'atleta.sexo',
+          'prueba',
+          'atleta.nombre_apellido',
+          'atleta.pais',
+          'atleta.dni',
+          'dia',
+          'mes',
+          'anio',
+          'marca',
+          'atleta.club.siglas',
+          'atleta.asociacion.siglas',
+          'atleta.federacion.siglas'
+        ]
+      }
+
+      const parser = new AsyncParser(csvOpts)
+      const csv = await parser.parse(newData).promise()
+
+      res.setHeader('Content-disposition', 'attachment; filename=inscripciones.csv')
+      res.set('Content-Type', 'text/csv')
   
-      return res.json({total, inscripciones})
+      return res.send(csv)
       
     } catch (error) {
       return res.status(500).json({msg: error.message})
