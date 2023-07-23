@@ -14,7 +14,7 @@ const subirArchivoFirebase = (file, refRoute) => {
           if (['jpg', 'jpeg', 'png'].includes(fileExtension[fileExtension.length - 1])) {
             newFileName = v4() + '.' + fileExtension[fileExtension.length - 1];
           } else {
-            newFileName = file.name;
+            newFileName = (Math.random() + 1).toString(36).substring(7) + '-' + file.name;
           }
     
           // Crear referencia a archivo en Firebase
@@ -49,9 +49,6 @@ const borrarArchivoFirebase = async(refRoute) => {
 
     // Borrar archivo
     await deleteObject(desertRef)
-    .catch((error) => {
-        throw new Error('Error al borrar el archivo', error)
-    })
 }
 
 module.exports = {

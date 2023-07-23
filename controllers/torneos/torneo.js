@@ -161,9 +161,12 @@ const torneoPut = async(req, res) => {
         const torneo = await Torneo.findByIdAndUpdate( id, resto )
     
         // Borrar archivos anteriores si usuario lo cambia (Torneo.findByIdAndUpdate retorna valores anteriores al cambio)
-        torneo.resultados && await borrarArchivoTorneoFirebase(torneo.resultados, res)
-        torneo.programaHorario && await borrarArchivoTorneoFirebase(torneo.programaHorario, res)
-    
+        if(req.files) {
+            const {resultados, programaHorario} = req.files
+            if(resultados) torneo.resultados.length > 0 && await borrarArchivoTorneoFirebase(torneo.resultados)
+            if(programaHorario) torneo.programaHorario.length > 0 && await borrarArchivoTorneoFirebase(torneo.programaHorario)
+        }
+        
         return res.json(torneo)
         
     } catch (error) {
