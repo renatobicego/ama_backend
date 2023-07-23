@@ -84,6 +84,28 @@ const torneoGet = async(req, res) => {
 
 }
 
+const torneoGetPorId = async(req, res) => {
+    // Limitar resultados
+    const {id} = req.params
+
+    try {
+        // Query
+        const torneo = await 
+            Torneo.findById(id)
+                .populate("pruebasDisponibles", "nombre")
+                .populate("categoriasDisponibles", "nombre")
+                .lean()
+    
+        return res.json({
+            torneo
+        })
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+    }
+
+}
+
 const torneoGetInscripcionActiva = async(req, res) => {
 
     try {
@@ -179,5 +201,6 @@ module.exports = {
     torneoGet,
     torneoGetInscripcionActiva,
     torneoPut,
-    torneoDelete
+    torneoDelete,
+    torneoGetPorId
 }
