@@ -3,7 +3,6 @@ const { imagenNoticiaPost, imagenNoticiaDelete, imagenNoticiaPut } = require("..
 const { validarJWT } = require("../middlewares/validarJwt");
 const { tieneRole } = require("../middlewares/validarRoles");
 const { check } = require("express-validator");
-const { validarArchivoMiddleware } = require("../middlewares/validarArchivoMiddleware");
 const { validarCampos } = require("../middlewares/validarCampos");
 const { existeImagenNoticia } = require("../helpers");
 
@@ -14,7 +13,7 @@ router.post('/', [
     validarJWT,
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
     check('epigrafe', 'La imagen debe contener un epígrafe').isLength({min: 3}),
-    validarArchivoMiddleware,
+    check('url', 'La imagen no pudo subirse correctamente').isLength({min: 3}),
     validarCampos
 
 ], imagenNoticiaPost)
@@ -32,7 +31,7 @@ router.put('/:id', [
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
     check('id', 'Imagen no registrada').isMongoId(),
     check('id').custom(existeImagenNoticia),
-    check('epigrafe', 'La imagen debe contener un epígrafe').optional().isLength({min: 3}),
+    check('url', 'La imagen no pudo subirse correctamente').optional().isLength({min: 3}),
     validarCampos
 ], imagenNoticiaPut)
 

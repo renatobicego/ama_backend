@@ -1,8 +1,5 @@
-const { subirArchivoFirebase, borrarArchivoFirebase } = require('../../helpers')
-const {validarArchivos} = require('../../helpers')
-const comprimirArchivos = require('../../helpers/functions/comprimirArchivos')
+const { borrarArchivoFirebase } = require('../../helpers')
 const {Club} = require('../../models')
-
 
 const clubPost = async (req, res) => {
 
@@ -13,23 +10,12 @@ const clubPost = async (req, res) => {
         instagram,
         facebook,
         twitter,
-        siglas
+        siglas,
+        logoImg
     } = req.body
 
-    // Obtener logo de club
-    let {logoImg} = req.files
-
-    // Validar extension y tamaño
-    const msg = validarArchivos(logoImg, ['jpg', 'jpeg', 'png'])
-    if(msg){
-        return res.status(401).json({msg})
-    }
-
-    // Subir a firebase el logo
-    let fbLinkImage 
     try {
-        logoImg = await comprimirArchivos(logoImg, 'png')
-        fbLinkImage = await subirArchivoFirebase(logoImg, 'images/clubes/')
+
         const club = new Club({
             nombre, 
             ciudad, 
@@ -37,7 +23,7 @@ const clubPost = async (req, res) => {
             instagram,
             facebook,
             twitter,
-            logoImg: fbLinkImage,
+            logoImg,
             siglas
         })
     
@@ -97,30 +83,10 @@ const clubPut = async(req, res) => {
     const { id } = req.params;
     const { _id, ...resto } = req.body;
 
-    // Si el logo es cambiado, actualizar
-    if ( req.files ) {
-        let fbLinkImage 
-        let {logoImg} = req.files
-
-        // Validar extension y tamaño
-        const msg = validarArchivos(logoImg, ['jpg', 'jpeg', 'png'])
-        if(msg){
-            return res.status(401).json({msg})
-        }
-
-        try {
-            logoImg = await comprimirArchivos(logoImg, 'png')
-            fbLinkImage = await subirArchivoFirebase(logoImg, 'images/clubes/')
-        } catch (error) {
-            return res.status(500).json({msg: error.message})
-        }
-        resto.logoImg = fbLinkImage
-    }
-
     try {
         const club = await Club.findByIdAndUpdate( id, resto )
         // Borrar logo anterior si usuario lo cambia (Club.findByIdAndUpdate retorna valores anteriores al update)
-        if ( req.files ){
+        if ( resto.logoImg ){
             await borrarArchivoFirebase(club.logoImg)
         }
     

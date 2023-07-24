@@ -30,7 +30,8 @@ const torneoPost = async (req, res) => {
         fecha, 
         pruebasDisponibles, 
         categoriasDisponibles, 
-        lugar
+        lugar,
+        programaHorario
     } = req.body
 
     try {
@@ -41,6 +42,7 @@ const torneoPost = async (req, res) => {
             lugar,
             pruebasDisponibles, 
             categoriasDisponibles,
+            programaHorario
         })
         
         //Guardar Db
@@ -135,37 +137,13 @@ const torneoGetInscripcionActiva = async(req, res) => {
 const torneoPut = async(req, res) => {
     const { id } = req.params;
     const { _id, ...resto } = req.body
+    const {programaHorario, resultados} = req.body
 
     try {
-        // Subir a firebase resultados y programa horario si son enviados
-        if(req.files){
-            const {resultados, programaHorario} = req.files
-            if(resultados){
-                // Validar tamaño y extensión
-                const msg = validarArchivos(resultados, ['pdf', 'docx', 'doc'])
-                if(msg){
-                    return res.status(401).json({msg})
-                }
-                resto.resultados = await subirArchivosTorneoFirebase(resultados, 'archivos/resultadosTorneos/', res)
-            }
-            if(programaHorario){
-                // Validar tamaño y extensión
-                const msg = validarArchivos(programaHorario, ['pdf', 'docx', 'doc'])
-                if(msg){
-                    return res.status(401).json({msg})
-                }
-                resto.programaHorario = await subirArchivosTorneoFirebase(programaHorario, 'archivos/programaHorarioTorneos/', res)
-            }
-        }
     
         const torneo = await Torneo.findByIdAndUpdate( id, resto )
-    
-        // Borrar archivos anteriores si usuario lo cambia (Torneo.findByIdAndUpdate retorna valores anteriores al cambio)
-        if(req.files) {
-            const {resultados, programaHorario} = req.files
-            if(resultados) torneo.resultados.length > 0 && await borrarArchivoTorneoFirebase(torneo.resultados)
-            if(programaHorario) torneo.programaHorario.length > 0 && await borrarArchivoTorneoFirebase(torneo.programaHorario)
-        }
+        if(resultados) torneo.resultados.length > 0 && await borrarArchivoTorneoFirebase(torneo.resultados)
+        if(programaHorario) torneo.programaHorario.length > 0 && await borrarArchivoTorneoFirebase(torneo.programaHorario)
         
         return res.json(torneo)
         
@@ -187,8 +165,8 @@ const torneoDelete = async(req, res) => {
         const torneo = await Torneo.findByIdAndDelete( id )
     
         // Borrar archivos (Torneo.findByIdAndDelete retorna valor borrado)
-        torneo.resultados && await borrarArchivoTorneoFirebase(torneo.resultados)
-        torneo.programaHorario && await borrarArchivoTorneoFirebase(torneo.programaHorario)
+        torneo.resultados.length > 0 && await borrarArchivoTorneoFirebase(torneo.resultados)
+        torneo.programaHorario.length > 0 && await borrarArchivoTorneoFirebase(torneo.programaHorario)
     
         return res.json(torneo)
         

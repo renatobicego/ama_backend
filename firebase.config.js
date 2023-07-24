@@ -2,7 +2,7 @@
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: process.env.FIREBAS_API_KEYS,
+    apiKey: process.env.FIREBAS_API_KEY,
     authDomain: process.env.FIREBAS_DOMAIN,
     projectId: process.env.FIREBAS_PROJECTID,
     storageBucket: process.env.FIREBAS_BUCKET,

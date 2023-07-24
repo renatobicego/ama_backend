@@ -4,6 +4,7 @@ const { v4 } = require("uuid")
 const storage = getStorage()
 
 const subirArchivoFirebase = (file, refRoute) => {
+    console.log(file);
     return new Promise(async (resolve, reject) => {
         try {
           // Obtener extensión de archivo (en caso de tener más de un punto, usa fileExtension.length - 1)
@@ -38,6 +39,7 @@ const subirArchivoFirebase = (file, refRoute) => {
             }
           )
         } catch (error) {
+          console.log(error);
           reject(new Error('Error al subir el archivo', error));
         }
       })

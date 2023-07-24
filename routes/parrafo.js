@@ -15,7 +15,7 @@ router.post('/', [
     check('texto', 'Debe agregar más texto al párrafo').isLength({min: 20}),
     check('orden', 'Error al crear el orden de los párrafos').notEmpty(),
     check('titulo', 'Debe agregar más texto al título').optional().isLength({min: 10}),
-    check('imagen', 'Error en la imagen').optional().isMongoId(),
+    check('imagenes', 'No se han podido subir correctamente las imagenes').optional().isArray({min: 1}),
     validarCampos
 
 ], parrafoPost)
@@ -35,7 +35,6 @@ router.put('/:id', [
     check('id').custom(existeParrafoNoticia),
     check('texto', 'Debe agregar más texto al párrafo').optional().isLength({min: 20}),
     check('titulo', 'Debe agregar más texto al título').optional().isLength({min: 10}),
-    check('imagen', 'Error en la imagen').optional().isMongoId(),
     validarCampos
 ], parrafoPut)
 

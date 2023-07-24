@@ -1,6 +1,5 @@
 const { Router } = require("express");
 const { campeonPost, campeonGet, campeonPut, campeonDelete } = require("../controllers");
-const { validarArchivoMiddleware } = require("../middlewares/validarArchivoMiddleware");
 const { validarCampos } = require("../middlewares/validarCampos");
 const { check } = require("express-validator");
 const { validarJWT } = require("../middlewares/validarJwt");
@@ -15,7 +14,7 @@ router.post('/', [
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
     check('nombreApellido', 'Nombre y apellido obligatorio').notEmpty(),
     check('pruebasCampeon', 'Agregue al menos una prueba').isArray({min: 1}),
-    validarArchivoMiddleware,
+    check('img', 'No se ha podido subir la imagen correctamente').isLength({min: 3}),
     validarCampos
 ], campeonPost)
 

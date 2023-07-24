@@ -2,12 +2,12 @@ const { borrarArchivoFirebase } = require("../../helpers")
 const { Parrafo, ImagenNoticia } = require("../../models")
 
 const parrafoPost = async(req, res) => {
-    const {texto, orden, imagen, titulo} = req.body
+    const {texto, orden, imagenes, titulo} = req.body
 
     try {
         const parrafo = new Parrafo({texto, orden})
     
-        parrafo.imagen = imagen ? imagen : null
+        parrafo.imagenes = imagenes ? imagenes : []
         parrafo.titulo = titulo ? titulo : null
     
         await parrafo.save()

@@ -18,6 +18,8 @@ router.put('/:id', [
     check('fecha', 'Fecha de nacimiento obligatoria').optional().isDate({format: 'YYYY-MM-dd'}),
     check('pruebasDisponibles', 'Ingrese al menos una prueba al torneo').optional().isArray({min: 1}),
     check('categoriasDisponibles', 'Ingrese al menos una categoria al torneo').optional().isArray({min: 1}),
+    check('resultados', 'No se han podido subir los resultados').optional().isLength({min: 1}),
+    check('programaHorario', 'No se ha podido subir el programa horario').optional().isLength({min: 1}),
     validarCampos
 ], torneoPut)
 
@@ -28,6 +30,7 @@ router.post('/', [
     check('lugar', 'Lugar obligatorio').not().isEmpty(),
     check('fecha', 'Fecha de nacimiento obligatoria').isDate({format: 'YYYY-MM-dd'}),
     check('pruebasDisponibles', 'Ingrese al menos una prueba al torneo').isArray({min: 1}),
+    check('programaHorario', 'No se ha podido subir el programa horario').optional().isLength({min: 1}),
     check('categoriasDisponibles', 'Ingrese al menos una categoria al torneo').isArray({min: 1}),
     validarCampos
 ], torneoPost)
