@@ -86,6 +86,33 @@ const torneoGet = async(req, res) => {
 
 }
 
+const torneoGetResultados = async(req, res) => {
+    // Limitar resultados
+    const { limite = 5, desde = 0 } = req.query;
+
+    try {
+        // Query
+        const [ total, torneos ] = await Promise.all([
+            Torneo.countDocuments(),
+            Torneo.find({inscripcionesAbiertas: false})
+                .skip( Number( desde ) )
+                .limit(Number( limite ))
+                // Ordenar por fecha
+                .sort({fecha: 'desc'})
+                .lean()
+        ]);
+    
+        return res.json({
+            total,
+            torneos
+        })
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+    }
+
+}
+
 const torneoGetPorId = async(req, res) => {
     // Limitar resultados
     const {id} = req.params
@@ -183,5 +210,6 @@ module.exports = {
     torneoGetInscripcionActiva,
     torneoPut,
     torneoDelete,
-    torneoGetPorId
+    torneoGetPorId,
+    torneoGetResultados
 }

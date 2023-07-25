@@ -3,13 +3,14 @@ const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
 const { tieneRole } = require("../middlewares/validarRoles")
 const { validarJWT } = require("../middlewares/validarJwt")
-const { torneoPost, torneoGet, torneoPut, torneoDelete, torneoGetInscripcionActiva, torneoGetPorId } = require("../controllers")
+const { torneoPost, torneoGet, torneoPut, torneoDelete, torneoGetInscripcionActiva, torneoGetPorId, torneoGetResultados } = require("../controllers")
 const { existeTorneoPorId } = require("../helpers")
 
 const router = Router()
 
 router.get('/', torneoGet)
 router.get('/activos', torneoGetInscripcionActiva)
+router.get('/resultados', torneoGetResultados)
 router.get('/:id', torneoGetPorId)
 
 router.put('/:id', [
