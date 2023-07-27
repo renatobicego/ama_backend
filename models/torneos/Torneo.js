@@ -13,6 +13,10 @@ const TorneoSchema = Schema({
         type: Date,
         required: [true, 'La fecha es obligatoria']
     },
+    cantidadDias: {
+        type: Number, 
+        required: [true, 'La cantidad de dias es obligatorio']
+    },
     inscripcionesAbiertas: {
         type: Boolean,
         default: true

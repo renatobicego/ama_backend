@@ -1,16 +1,5 @@
 const { Torneo } = require('../../models')
-const { validarArchivos, subirArchivoFirebase, borrarArchivoFirebase } = require('../../helpers')
-
-const subirArchivosTorneoFirebase = async(file, ref) => {
-    
-    let linkFirebase
-    try {
-        linkFirebase = await subirArchivoFirebase(file, ref)
-    } catch (error) {
-        throw new Error(error)
-    }
-    return linkFirebase
-}
+const { borrarArchivoFirebase } = require('../../helpers')
 
 const borrarArchivoTorneoFirebase = async(ref) => {
     try {
@@ -31,7 +20,8 @@ const torneoPost = async (req, res) => {
         pruebasDisponibles, 
         categoriasDisponibles, 
         lugar,
-        programaHorario
+        programaHorario,
+        cantidadDias
     } = req.body
 
     try {
@@ -42,7 +32,8 @@ const torneoPost = async (req, res) => {
             lugar,
             pruebasDisponibles, 
             categoriasDisponibles,
-            programaHorario
+            programaHorario,
+            cantidadDias
         })
         
         //Guardar Db
@@ -93,7 +84,7 @@ const torneoGetResultados = async(req, res) => {
     try {
         // Query
         const [ total, torneos ] = await Promise.all([
-            Torneo.countDocuments(),
+            Torneo.countDocuments({inscripcionesAbiertas: false}),
             Torneo.find({inscripcionesAbiertas: false})
                 .skip( Number( desde ) )
                 .limit(Number( limite ))
@@ -121,7 +112,18 @@ const torneoGetPorId = async(req, res) => {
         // Query
         const torneo = await 
             Torneo.findById(id)
-                .populate("pruebasDisponibles", "nombre")
+                .populate({
+                    path: "pruebasDisponibles",
+                    select: [
+                      "nombre", 
+                      "tipo"
+                    ],
+                    populate: 
+                      {
+                        path: "categorias",
+                        select: ["nombre"],
+                      },
+                    })
                 .populate("categoriasDisponibles", "nombre")
                 .lean()
     
@@ -140,9 +142,20 @@ const torneoGetInscripcionActiva = async(req, res) => {
     try {
         // Query
         const [ total, torneos ] = await Promise.all([
-            Torneo.countDocuments(),
+            Torneo.countDocuments({inscripcionesAbiertas: true}),
             Torneo.find({inscripcionesAbiertas: true})
-                .populate("pruebasDisponibles", "nombre")
+                .populate({
+                    path: "pruebasDisponibles",
+                    select: [
+                    "nombre", 
+                    "tipo"
+                    ],
+                    populate: 
+                    {
+                        path: "categorias",
+                        select: ["nombre"],
+                    },
+                    })
                 .populate("categoriasDisponibles", "nombre")
                 // Ordenar por fecha
                 .sort({fecha: 'asc'})

@@ -8,7 +8,12 @@ const PruebaSchema = Schema({
     tipo: {
         type: String,
         required: [true, 'El tipo de la prueba es obligatorio']
-    }
+    },
+    categorias: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Categoria',
+        default: []
+    }]
 })
 
 

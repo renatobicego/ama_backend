@@ -140,6 +140,12 @@ const usuariosGetPorClub = async(req, res) => {
     }
 }
 
+const usuarioGetPruebasFavoritas = async(req, res) => {
+    const {id} = req.body
+    const pruebasFavoritas = await PruebaAtleta.find({atleta: id})
+    return res.json({pruebasFavoritas})
+}
+
 const usuariosPut = async(req, res) => {
 
     const { id } = req.params;
@@ -188,5 +194,6 @@ module.exports = {
     usuariosPut,
     usuariosDelete,
     usuariosGetPorClub,
-    usuarioGetPorId
+    usuarioGetPorId,
+    usuarioGetPruebasFavoritas
 }
