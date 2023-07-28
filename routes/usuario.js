@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete, usuariosGetPorClub, usuarioGetPorId, usuarioGetPruebasFavoritas } = require("../controllers")
+const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete, usuariosGetPorClub, usuarioGetPorId} = require("../controllers")
 const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
 const {existeEmail, esRoleValido, existeUsuarioPorId, existeClubPorId, existeUsuarioPorDni} = require('../helpers')
@@ -14,10 +14,6 @@ router.get('/:id', [
     check('id').custom(existeUsuarioPorId),
     validarCampos
 ], usuarioGetPorId)
-router.get('/pruebasFavoritas/:id', [
-    check('id').custom( existeUsuarioPorId ),
-    validarCampos
-], usuarioGetPruebasFavoritas)
 
 router.put('/:id', [
     check('id', 'No es un ID válido').isMongoId(),
@@ -30,7 +26,6 @@ router.put('/:id', [
     check('fecha_nacimiento', 'Fecha de nacimiento incorrecta').optional().isDate({format: 'YYYY-MM-dd'}),
     check('email', 'Correo no válido').optional().isEmail(),
     check('email').optional().custom(existeEmail),
-    check('pruebasFavoritas', 'No ha agregado correctamente las pruebas').optional().isArray({min: 1}),
     check('club').optional().custom(existeClubPorId),
     check('federacion', 'Federación obligatoria').optional().isMongoId(),
     check('asociacion', 'Asociación obligatoria').optional().isMongoId(),

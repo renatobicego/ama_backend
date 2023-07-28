@@ -62,14 +62,6 @@ const usuariosGet = async(req, res) => {
                 .populate("club", "nombre")
                 .populate("federacion", "nombre")
                 .populate("asociacion", "nombre")
-                .populate({
-                    path: "pruebasFavoritas",
-                    select: ["marca"],
-                    populate: {
-                      path: "prueba",
-                      select: ["nombre"],
-                    },
-                  })
                 .lean()
         ]);
     
@@ -92,14 +84,6 @@ const usuarioGetPorId = async(req, res) => {
                 .populate("club", "nombre")
                 .populate("federacion", "nombre")
                 .populate("asociacion", "nombre")
-                .populate({
-                    path: "pruebasFavoritas",
-                    select: ["marca"],
-                    populate: {
-                    path: "prueba",
-                    select: ["nombre"],
-                    },
-                })
                 .lean()
         res.json({usuario})
     } catch (error) {
@@ -119,14 +103,6 @@ const usuariosGetPorClub = async(req, res) => {
                 .populate("club", "nombre")
                 .populate("federacion", "nombre")
                 .populate("asociacion", "nombre")
-                .populate({
-                    path: "pruebasFavoritas",
-                    select: ["marca"],
-                    populate: {
-                      path: "prueba",
-                      select: ["nombre"],
-                    },
-                  })
                 .lean()
         ]);
     
@@ -138,12 +114,6 @@ const usuariosGetPorClub = async(req, res) => {
     } catch (error) {
         return res.status(500).json({msg: error.message})
     }
-}
-
-const usuarioGetPruebasFavoritas = async(req, res) => {
-    const {id} = req.body
-    const pruebasFavoritas = await PruebaAtleta.find({atleta: id})
-    return res.json({pruebasFavoritas})
 }
 
 const usuariosPut = async(req, res) => {
@@ -173,9 +143,10 @@ const usuariosDelete = async(req, res = response) => {
     try {
         const usuario = await Usuario.findByIdAndDelete( id )
     
-        await usuario.pruebasFavoritas.forEach(async (prueba) => {
-            await PruebaAtleta.findByIdAndDelete(prueba._id)
-        })
+        const pruebasAtleta = await PruebaAtleta.find({atleta: id})
+        pruebasAtleta.forEach(async prueba => {
+            await prueba.deleteOne()
+        });
     
         return res.json(usuario)
         
@@ -194,6 +165,5 @@ module.exports = {
     usuariosPut,
     usuariosDelete,
     usuariosGetPorClub,
-    usuarioGetPorId,
-    usuarioGetPruebasFavoritas
+    usuarioGetPorId
 }

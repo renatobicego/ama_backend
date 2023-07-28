@@ -56,12 +56,7 @@ const UsuarioSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Club',
         default: null
-    },
-    pruebasFavoritas: [{
-        type: Schema.Types.ObjectId,
-        ref: 'PruebaAtleta',
-        default: []
-    }]
+    }
 })
 
 UsuarioSchema.pre("save", async function (next) {

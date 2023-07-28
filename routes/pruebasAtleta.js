@@ -15,7 +15,6 @@ router.get('/:id', [
 ], pruebaAtletaGetPorAtleta)
 
 router.post('/', [
-    validarJWT,
     check('atleta', 'Atleta no registrado').isMongoId(),
     check('atleta').custom(existeUsuarioPorId),
     check('prueba', 'Prueba no existente').isMongoId(),
@@ -25,7 +24,7 @@ router.post('/', [
 ], pruebaAtletaPost)
 
 router.put('/:id', [
-    validarJWT,
+ 
     check('id', 'Prueba de atleta no registrada').isMongoId(),
     check('id').custom(existePruebaAtleta),
     check('prueba', 'Prueba no existente').optional().isMongoId(),
@@ -34,7 +33,6 @@ router.put('/:id', [
 ], pruebaAtletaPut)
 
 router.delete('/:id', [
-    validarJWT,
     check('id', 'Prueba de atleta no registrada').isMongoId(),
     check('id').custom(existePruebaAtleta),
     validarCampos

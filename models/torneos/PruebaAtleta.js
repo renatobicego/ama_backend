@@ -19,7 +19,7 @@ const PruebaAtletaSchema = Schema({
 PruebaAtletaSchema.pre('save', async function (next) {
     try {
       // Obtener el tipo de prueba desde el modelo "Prueba" referenciado.
-      if (this.marca || this.marca !== '') {
+      if (this.marca || this.marca !== undefined) {
         return next();
       }
       const tipoPrueba = await this.model('Prueba').findById(this.prueba).select('tipo')
