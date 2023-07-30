@@ -62,6 +62,13 @@ const existeInscripcionPorId = async(id) => {
     }
 }
 
+const existeInscripcionEnAtleta = async(torneo, atleta) => {
+    const existeInscripcion = await Inscripcion.findOne({atleta, torneo})
+    if(!existeInscripcion){
+        throw new Error(`Ya se ha inscripto a este torneo. Si necesita, edite su inscripción en Mi Perfil > Mis Inscripciones`)
+    }
+}
+
 const existePruebaEnUsuario = async(id) => {
     const existePruebaRegistradaEnUsuario = await PruebaAtleta.findOne({prueba: id})
     if(existePruebaRegistradaEnUsuario){
@@ -118,5 +125,6 @@ module.exports = {
     existeImagenNoticia,
     existeParrafoNoticia,
     existeNoticia,
-    existeUsuarioPorDni
+    existeUsuarioPorDni,
+    existeInscripcionEnAtleta
 }

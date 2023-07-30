@@ -2,7 +2,7 @@ const { Router } = require("express");
 const { validarJWT } = require("../middlewares/validarJwt");
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validarCampos");
-const { existeUsuarioPorId, existeTorneoPorId, existeInscripcionPorId } = require("../helpers");
+const { existeUsuarioPorId, existeTorneoPorId, existeInscripcionPorId, existeInscripcionEnAtleta } = require("../helpers");
 const { inscripcionPost, inscripcionGetPorTorneo, inscripcionGetPorAtleta, inscripcionGetPorClub, inscripcionPut, inscripcionDelete } = require("../controllers");
 
 
@@ -18,6 +18,7 @@ router.post('/', [
     check('atleta').custom(existeUsuarioPorId),
     check('torneo', 'Torneo no está registrado').isMongoId(),
     check('torneo').custom(existeTorneoPorId),
+    check(['torneo', 'atleta']).custom(existeInscripcionEnAtleta),
     check('categoria', 'Categoría no está registrada').isMongoId(),
     check('pruebasInscripto', 'Elija al menos una prueba para inscribirse').isArray({min: 1}),
     validarCampos
