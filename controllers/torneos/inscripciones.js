@@ -122,6 +122,38 @@ const inscripcionGetPorAtleta = async(req, res) => {
 
 }
 
+const inscripcionGetPorId= async(req, res) => {
+  // Obetenr id del usuario que realiza la petición
+  const {id} = req.params
+
+  try {
+    const inscripcion = await Inscripcion.findById(id)
+            // Solo torneos con inscripción abierta
+            .populate({
+                path: "torneo",
+                select: ["nombre"]
+            })
+            .populate("atleta", "nombre_apellido")
+            .populate("categoria", "nombre")
+            // Mostrar peuebas con marca
+            .populate({
+                path: "pruebasInscripto",
+                select: ["marca"],
+                populate: {
+                  path: "prueba",
+                  select: ["nombre", "tipo"],
+                },
+              })
+            .lean()
+
+    return res.json({inscripcion})
+    
+  } catch (error) {
+    return res.status(500).json({msg: error.message})
+  }
+
+}
+
 const inscripcionGetPorClub= async(req, res) => {
     // Obtener id de club
     const {idClub} = req.params
@@ -172,7 +204,7 @@ const inscripcionPut = async(req, res) => {
     const {id} = req.params
     
     // Usuario no puede cambiar el torneo ni el usuario de la inscripción
-    const {_id, torneo, atleta, ...resto} = req.body
+    const {_id, torneo, atleta, categoria, ...resto} = req.body
 
     try {
       const inscripcion = await Inscripcion.findByIdAndUpdate(id, resto)
@@ -207,5 +239,6 @@ module.exports = {
     inscripcionGetPorAtleta,
     inscripcionGetPorClub,
     inscripcionPut,
-    inscripcionDelete
+    inscripcionDelete,
+    inscripcionGetPorId
 }

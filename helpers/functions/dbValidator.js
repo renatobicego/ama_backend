@@ -62,9 +62,10 @@ const existeInscripcionPorId = async(id) => {
     }
 }
 
-const existeInscripcionEnAtleta = async(torneo, atleta) => {
-    const existeInscripcion = await Inscripcion.findOne({atleta, torneo})
-    if(!existeInscripcion){
+const existeInscripcionEnAtleta = async(torneo, req) => {
+    
+    const existeInscripcion = await Inscripcion.findOne({atleta: req.atleta, torneo})
+    if(existeInscripcion){
         throw new Error(`Ya se ha inscripto a este torneo. Si necesita, edite su inscripción en Mi Perfil > Mis Inscripciones`)
     }
 }
