@@ -44,14 +44,30 @@ const clubGet = async(req, res) => {
         // Query
         const [ total, clubes ] = await Promise.all([
             Club.countDocuments(),
-            Club.find()
-                .populate("entrenadores", ["nombre_apellido", "telefono"])
-                .lean()
+            Club.find().lean()
         ]);
     
         return res.json({
             total,
             clubes
+        });
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
+}
+
+const clubGetPorNombre = async(req, res) => {
+    const nombre = decodeURIComponent(req.params.nombre)
+    try {
+        // Query
+        const club = await Club.findOne({nombre})
+                .populate("entrenadores", ["nombre_apellido", "telefono"])
+                .lean()
+    
+        return res.json({
+            club
         });
         
     } catch (error) {
@@ -102,6 +118,7 @@ module.exports = {
     clubPost,
     clubGet,
     clubDelete,
-    clubPut
+    clubPut,
+    clubGetPorNombre
 }
 

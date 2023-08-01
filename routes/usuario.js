@@ -44,9 +44,9 @@ router.post('/', [
     check('email').custom(existeEmail),
     check('password', 'Password obligatorio').isLength({min: 8}),
     check('role').custom(esRoleValido),
-    check('club').custom(existeClubPorId),
-    check('federacion', 'Federación obligatoria').notEmpty(),
-    check('asociacion', 'Asociación obligatoria').notEmpty(),
+    check('club').optional().custom(existeClubPorId),
+    check('federacion', 'Federación no correcta').optional().isMongoId(),
+    check('asociacion', 'Asociación no correcta').optional().isMongoId(),
     validarCampos
 ], usuariosPost)
 
