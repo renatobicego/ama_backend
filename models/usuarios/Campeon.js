@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 const CampeonSchema = Schema({
-    nombreApellido: {
+    nombre_apellido: {
         type: String,
         required: true
     },

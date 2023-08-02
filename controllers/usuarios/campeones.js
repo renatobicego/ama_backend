@@ -5,10 +5,10 @@ const { Campeon } = require("../../models")
 const campeonPost = async(req, res) => {
 
     // Obtener datos
-    const {nombreApellido, pruebasCampeon, img} = req.body
+    const {nombre_apellido, pruebasCampeon, img} = req.body
     
     try {
-        const campeon = new Campeon({nombreApellido, pruebasCampeon, img})
+        const campeon = new Campeon({nombre_apellido, pruebasCampeon, img})
         await campeon.save()
     
         return res.json({campeon})
@@ -24,6 +24,19 @@ const campeonGet = async(req, res) => {
     try {
         const campeones = await Campeon.find().populate('pruebasCampeon', 'nombre').lean()
         res.json({campeones})
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
+}
+
+const campeonGetPorId = async(req, res) => {
+    // Query obtener todos los campeones
+    const {id} = req.params
+    try {
+        const campeon = await Campeon.findById(id).populate('pruebasCampeon', 'nombre').lean()
+        res.json({campeon})
         
     } catch (error) {
         return res.status(500).json({msg: error.message})
@@ -74,5 +87,6 @@ module.exports = {
     campeonPost,
     campeonPut,
     campeonDelete,
-    campeonGet
+    campeonGet,
+    campeonGetPorId
 }
