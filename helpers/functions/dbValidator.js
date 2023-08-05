@@ -1,10 +1,16 @@
 const { Usuario, Role, Club, Torneo, Campeon, Inscripcion, PruebaAtleta, ImagenNoticia, Parrafo, Noticia } = require("../../models")
 
 
-const existeEmail = async(email) => {
+const existeEmail = async(email, {req}) => {
     const buscarMail = await Usuario.findOne({email})
-    if(buscarMail){
-        throw new Error(`El correo ${email} ya está registrado`)
+    if(req.params.id){
+        if(buscarMail._id.toString() !== req.params.id){
+            throw new Error(`El correo ${email} ya está registrado`)
+        }
+    }else{
+        if(buscarMail){
+            throw new Error(`El correo ${email} ya está registrado`)
+        }
     }
 } 
 
@@ -105,10 +111,17 @@ const existeNoticia = async(id) => {
     }
 }
 
-const existeUsuarioPorDni = async(dni) => {
+const existeUsuarioPorDni = async(dni, {req}) => {
     const existeUsuario = await Usuario.findOne({dni})
-    if(existeUsuario){
-        throw new Error(`El usuario con DNI ${dni} se encuentra registrado`)
+    
+    if(req.params.id){
+        if(existeUsuario._id.toString() !== req.params.id){
+            throw new Error(`El usuario con DNI ${dni} se encuentra registrado`)
+        }
+    }else{
+        if(existeUsuario){
+            throw new Error(`El usuario con DNI ${dni} se encuentra registrado`)
+        }
     }
 }
 

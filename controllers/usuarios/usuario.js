@@ -122,7 +122,7 @@ const usuariosPut = async(req, res) => {
     const { _id, password, ...resto } = req.body;
 
     try {   
-        const usuario = await Usuario.findByIdAndUpdate( id, resto )
+        const usuario = await Usuario.findByIdAndUpdate( id, resto , {new: true})
         return res.json(usuario)
         
     } catch (error) {
