@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const { clubPost, clubGet, clubDelete, clubPut, clubGetPorNombre } = require("../controllers")
+const { clubPost, clubGet, clubDelete, clubPut, clubGetPorNombre, clubGetPorId } = require("../controllers")
 const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
 const {existeEmailClub, existeClubPorId} = require('../helpers')
@@ -10,6 +10,7 @@ const router = Router()
 
 router.get('/', clubGet)
 router.get('/:nombre', clubGetPorNombre)
+router.get('/id/:id', clubGetPorId)
 
 router.put('/:id', [
     validarJWT,
@@ -26,8 +27,6 @@ router.post('/', [
     check('nombre', 'Nombre de club obligatorio').not().isEmpty(),
     check('ciudad', 'Ciudad/Departamento obligatorio').not().isEmpty(),
     check('siglas', 'Siglas obligatorias').not().isEmpty(),
-    check('entrenadores', 'Ingrese al menos un entrenador a cargo').isArray({min: 1}),
-    check('entrenadores.*', 'Ingrese correctamente un entrenador').isMongoId(),
     validarCampos
 ], clubPost)
 

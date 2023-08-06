@@ -57,6 +57,21 @@ const clubGet = async(req, res) => {
         
     }
 }
+const clubGetPorId = async(req, res) => {
+    const {id} = req.params
+    try {
+        // Query
+        const club = await Club.findById(id).populate("entrenadores", ["nombre_apellido", "telefono"]).lean()
+    
+        return res.json({
+            club
+        });
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
+}
 
 const clubGetPorNombre = async(req, res) => {
     const nombre = decodeURIComponent(req.params.nombre)
@@ -119,6 +134,7 @@ module.exports = {
     clubGet,
     clubDelete,
     clubPut,
-    clubGetPorNombre
+    clubGetPorNombre,
+    clubGetPorId
 }
 

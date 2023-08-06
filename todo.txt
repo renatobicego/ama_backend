@@ -1,15 +1,9 @@
 pagos
 newsletter
-definir datos de inscripcion y datos que necesitan en planilla
-usuario por id
-usuario middleware existeUsuarioPorDni
-usuario post federaciones obligatorias
-usuario sexo y dni
-usuario no guardar pruebasFav
 editar uml
 
 
 front: 
-nuevo form Inscripcion
-form crear cuenta y login
-panel administracion
+zoom a FormInputs
+pruebasFav cargar al inscribirse
+cambiar contraseña
