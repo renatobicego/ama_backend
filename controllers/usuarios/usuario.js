@@ -122,6 +122,9 @@ const usuariosPut = async(req, res) => {
     const { _id, password, ...resto } = req.body;
 
     try {   
+        if(resto.club === ''){
+            resto.club = null
+        }
         const usuario = await Usuario.findByIdAndUpdate( id, resto , {new: true})
         return res.json(usuario)
         

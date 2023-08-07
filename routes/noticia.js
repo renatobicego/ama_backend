@@ -10,13 +10,13 @@ const { noticiaPost, noticiaPut, noticiaGet, categoriasGet, noticiaDelete, notic
 const router = Router()
 
 router.get('/', noticiaGet)
+router.get('/categorias', categoriasGet)
 router.get('/:id', [
     check('id', 'Noticia no registrada').isMongoId(),
     check('id').custom(existeNoticia),
     validarCampos
 ], noticiaGetPorId)
 
-router.get('/categorias', categoriasGet)
 router.get('/noticias_recomendadas/:id', [
     check('id', 'Categoría no registrada').isMongoId(),
     validarCampos

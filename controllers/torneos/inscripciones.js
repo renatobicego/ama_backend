@@ -8,7 +8,7 @@ const inscripcionPost = async(req, res) => {
     const {torneo, atleta, pruebasInscripto, categoria} = req.body
 
     // Verificar que la inscripción sea al mismo usuario
-    if(atleta._id !== req.usuario._id && req.usuario.role === 'USER_ROLE'){
+    if(atleta !== req.usuario._id.toString() && req.usuario.role === 'USER_ROLE'){
         return res.status(403).json({msg: 'Acceso denegado, solo entrenadores púeden inscribir a otros atletas'})
     }
 
@@ -159,9 +159,7 @@ const inscripcionGetPorClub= async(req, res) => {
     const {idClub} = req.params
 
     try {
-      const [total, inscripciones] = await Promise.all([
-          Inscripcion.countDocuments(),
-          Inscripcion.find()
+      const inscripciones = await Inscripcion.find()
               // Torneos con inscripción abierta
               .populate({
                   path: "torneo",
@@ -174,7 +172,6 @@ const inscripcionGetPorClub= async(req, res) => {
                   select: ["nombre_apellido"],
                   match: { club: idClub } 
                 })
-              .populate("atleta", "nombre_apellido")
               .populate("categoria", "nombre")
               .populate({
                   path: "pruebasInscripto",
@@ -185,13 +182,11 @@ const inscripcionGetPorClub= async(req, res) => {
                   },
                 })
               .lean()
-      ])
-  
       const inscripcionesPorClub = inscripciones.filter(
           (inscripcion) => inscripcion.atleta !== null && inscripcion.torneo !== null
         )
   
-      return res.json({total, inscripcionesPorClub})
+      return res.json({inscripcionesPorClub})
       
     } catch (error) {
       return res.status(500).json({msg: error.message})

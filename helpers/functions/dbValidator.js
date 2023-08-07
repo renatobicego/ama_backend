@@ -48,9 +48,11 @@ const existeCampeonPorId = async( id ) => {
 }
 
 const existeClubPorId = async(id) => {
-    const existeClub = await Club.findById(id)
-    if(!existeClub){
-        throw new Error(`El club no existe `)
+    if(id !== ''){
+        const existeClub = await Club.findById(id)
+        if(!existeClub){
+            throw new Error(`El club no existe `)
+        }
     }
 }
 
@@ -68,9 +70,9 @@ const existeInscripcionPorId = async(id) => {
     }
 }
 
-const existeInscripcionEnAtleta = async(torneo, req) => {
+const existeInscripcionEnAtleta = async(torneo, {req}) => {
     
-    const existeInscripcion = await Inscripcion.findOne({atleta: req.atleta, torneo})
+    const existeInscripcion = await Inscripcion.findOne({atleta: req.body.atleta, torneo})
     if(existeInscripcion){
         throw new Error(`Ya se ha inscripto a este torneo. Si necesita, edite su inscripción en Mi Perfil > Mis Inscripciones`)
     }
