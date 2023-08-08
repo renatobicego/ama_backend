@@ -5,10 +5,7 @@ const parrafoPost = async(req, res) => {
     const {texto, orden, imagenes, titulo} = req.body
 
     try {
-        const parrafo = new Parrafo({texto, orden})
-    
-        parrafo.imagenes = imagenes ? imagenes : []
-        parrafo.titulo = titulo ? titulo : null
+        const parrafo = new Parrafo({texto, orden, imagenes, titulo})
     
         await parrafo.save()
         return res.json({parrafo})
@@ -43,13 +40,9 @@ const parrafoDelete = async(req, res) => {
     try {
         // Actualizar información
         const parrafo = await Parrafo.findByIdAndDelete(id)
-        if(parrafo.imagen){
-            parrafo.imagen.forEach(
-                async id => {
-                    const imgNoticia = await ImagenNoticia.findByIdAndDelete(id)
-                    await borrarArchivoFirebase(imgNoticia.url)
-                }
-            )
+        if(parrafo.imagenes){
+            const imgNoticia = await ImagenNoticia.findByIdAndDelete(parrafo.imagenes)
+            await borrarArchivoFirebase(imgNoticia.url)
         }
         
     

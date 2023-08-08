@@ -25,9 +25,9 @@ router.get('/noticias_recomendadas/:id', [
 router.post('/', [
     validarJWT,
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
-    check('subtitulo', 'Debe agregar más texto al subtítulo').isLength({min: 20}),
-    check('cuerpo', 'Error al crear el orden de los párrafos').isArray({min: 1}),
-    check('titulo', 'Debe agregar más texto al título').isLength({min: 10}),
+    check('subtitulo', 'Debe agregar más texto al subtítulo').isLength({min: 10}),
+    check('cuerpo', 'Error al crear los párrafos').isArray({min: 1}),
+    check('titulo', 'Debe agregar más texto al título').isLength({min: 5}),
     check('imgPortada', 'Error en la imagen').isMongoId(),
     check('fecha', 'Fecha incorrecta').isDate({format: 'YYYY-MM-dd'}),
     check('categoria', 'No existe la categoría seleccionada').isMongoId(),

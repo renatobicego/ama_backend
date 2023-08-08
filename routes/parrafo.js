@@ -12,10 +12,9 @@ const router = Router()
 router.post('/', [
     validarJWT,
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
-    check('texto', 'Debe agregar más texto al párrafo').isLength({min: 20}),
-    check('orden', 'Error al crear el orden de los párrafos').notEmpty(),
-    check('titulo', 'Debe agregar más texto al título').optional().isLength({min: 10}),
-    check('imagenes', 'No se han podido subir correctamente las imagenes').optional().isArray({min: 1}),
+    check('texto', 'Debe agregar más texto al párrafo').isLength({min: 10}),
+    check('titulo', 'Debe agregar más texto al título').optional().isLength({min: 1}),
+    check('imagenes', 'No se han podido subir correctamente las imagenes').optional().isMongoId(),
     validarCampos
 
 ], parrafoPost)

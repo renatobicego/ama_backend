@@ -6,17 +6,18 @@ const ParrafoSchema = Schema({
         type: String,
         required: [true, 'Texto obligatorio']
     },
-    imagenes: [{
+    imagenes: {
         type: Schema.Types.ObjectId,
-        ref: 'ImagenNoticia'
-    }],
+        ref: 'ImagenNoticia',
+        default: null
+    },
     titulo: {
         type: String,
         default: null
     },
     orden: {
         type: Number,
-        required: true
+        default: 0
     }
 })
 
