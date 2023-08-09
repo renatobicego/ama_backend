@@ -3,11 +3,13 @@ const { validarJWT } = require("../middlewares/validarJwt");
 const { tieneRole } = require("../middlewares/validarRoles");
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validarCampos");
-const { existeParrafoNoticia } = require("../helpers");
-const { parrafoPost, parrafoDelete, parrafoPut } = require("../controllers");
+const { existeParrafoNoticia, existeNoticia } = require("../helpers");
+const { parrafoPost, parrafoDelete, parrafoPut, parrafoGetPorIdDeNoticia } = require("../controllers");
 
 
 const router = Router()
+
+router.get('/:id', [check('id').custom(existeNoticia), validarCampos], parrafoGetPorIdDeNoticia)
 
 router.post('/', [
     validarJWT,
@@ -34,6 +36,7 @@ router.put('/:id', [
     check('id').custom(existeParrafoNoticia),
     check('texto', 'Debe agregar más texto al párrafo').optional().isLength({min: 20}),
     check('titulo', 'Debe agregar más texto al título').optional().isLength({min: 10}),
+    check('imagenes', 'La imagen no se ha podido subir').optional().isMongoId(),
     validarCampos
 ], parrafoPut)
 

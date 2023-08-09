@@ -1,4 +1,4 @@
-const { borrarArchivoFirebase, validarArchivos, subirArchivoFirebase } = require("../../helpers")
+const { borrarArchivoFirebase } = require("../../helpers")
 const { ImagenNoticia, Parrafo, Noticia, CategoriaNoticia } = require("../../models")
 
 
@@ -104,15 +104,15 @@ const noticiaGetPorId = async(req, res) => {
 
     try {
         // Query
-        const noticia  = await Noticia.find({_id: id})
+        const noticia  = await Noticia.findById(id)
                 .populate("imgPortada", ["url", "epigrafe"])
                 .populate("categoria", "nombre")
                 .populate("autor", "nombre_apellido")
                 .populate({
                     path: "cuerpo",
-                    select: ["titulo", "texto", "orden"],
+                    select: ["titulo", "texto"],
                     populate: {
-                      path: "imagen",
+                      path: "imagenes",
                       select: ["url", "epigrafe"],
                     },
                   })
@@ -155,8 +155,8 @@ const noticiaDelete = async(req, res) => {
         arrParrafos.forEach(async parrafo => {
             const parrafoBorrado = await Parrafo.findByIdAndDelete(parrafo._id)
             // Borrar imagen si tiene
-            if(parrafoBorrado.imagen){
-                parrafoBorrado.imagen.forEach(
+            if(parrafoBorrado.imagenes){
+                parrafoBorrado.imagenes.forEach(
                     async id => await deleteImagenNoticia(id, res)
                 )
             }

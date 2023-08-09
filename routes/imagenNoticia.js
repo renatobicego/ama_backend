@@ -12,7 +12,6 @@ const router = Router()
 router.post('/', [
     validarJWT,
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
-    check('epigrafe', 'La imagen debe contener un epígrafe').optional().isLength({min: 3}),
     check('url', 'La imagen no pudo subirse correctamente').isLength({min: 3}),
     validarCampos
 

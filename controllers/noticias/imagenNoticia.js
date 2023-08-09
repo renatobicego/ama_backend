@@ -16,10 +16,10 @@ const imagenNoticiaPost = async(req, res) => {
 
     try {
         //Crear imagen con epigrafe en la db
-        const imgPortada = new ImagenNoticia({url, epigrafe})
-        await imgPortada.save()
+        const imgNoticia = new ImagenNoticia({url, epigrafe})
+        await imgNoticia.save()
     
-        return res.json({imgPortada})
+        return res.json({imgNoticia})
         
     } catch (error) {
         return res.status(500).json({ msg: error.message })
@@ -32,12 +32,12 @@ const imagenNoticiaDelete = async(req, res) => {
 
     try {
         // Eliminar en la db
-        const imgPortada = await ImagenNoticia.findByIdAndDelete(id)
+        const imgNoticia = await ImagenNoticia.findByIdAndDelete(id)
     
         //Eliminar imagen de firebase
-        await borrarArchivoNoticiaFirebase(imgPortada.url)
+        await borrarArchivoNoticiaFirebase(imgNoticia.url)
     
-        return res.json({imgPortada})
+        return res.json({imgNoticia})
         
     } catch (error) {
         return res.status(500).json({ msg: error.message })
@@ -52,7 +52,7 @@ const imagenNoticiaPut = async(req, res) => {
 
     try {
         // Obtener imagen de noticia
-        const imgNoticia = await ImagenNoticia.findByIdAndUpdate(id)
+        const imgNoticia = await ImagenNoticia.findByIdAndUpdate(id, resto)
     
         //Acualizar datos si existen
         if(resto.url){

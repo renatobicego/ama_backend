@@ -1,5 +1,31 @@
 const { borrarArchivoFirebase } = require("../../helpers")
-const { Parrafo, ImagenNoticia } = require("../../models")
+const { Parrafo, ImagenNoticia, Noticia } = require("../../models")
+
+const parrafoGetPorIdDeNoticia = async(req, res) => {
+    // Obtener id 
+    const {id} = req.params
+
+    try {
+        // Query
+        const {cuerpo: parrafos}  = await Noticia.findById(id)
+                                                    .populate({
+                                                        path: "cuerpo",
+                                                        select: ["titulo", "texto"],
+                                                        populate: {
+                                                        path: "imagenes",
+                                                        select: ["url", "epigrafe"],
+                                                        },
+                                                    })
+                                                    .lean()
+    
+        return res.json({
+            parrafos
+        });
+        
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
+}
 
 const parrafoPost = async(req, res) => {
     const {texto, orden, imagenes, titulo} = req.body
@@ -57,5 +83,6 @@ const parrafoDelete = async(req, res) => {
 module.exports = {
     parrafoPost,
     parrafoPut,
-    parrafoDelete
+    parrafoDelete,
+    parrafoGetPorIdDeNoticia
 }
