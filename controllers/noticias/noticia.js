@@ -59,6 +59,7 @@ const noticiaGet = async(req, res) => {
                 .limit(Number( limite ))
                 .populate("imgPortada", "url")
                 .populate("categoria", "nombre")
+                .sort({fecha: 'desc'})
                 .lean()
         ]);
     
@@ -127,6 +128,55 @@ const noticiaGetPorId = async(req, res) => {
     }
 }
 
+const noticiaGetPorTitulo = async(req, res) => {
+    const titulo = decodeURIComponent(req.params.titulo)
+    try {
+        // Query
+        const noticia = await Noticia.findOne({titulo})
+                        .populate("imgPortada", ["url", "epigrafe"])
+                        .populate("categoria", "nombre")
+                        .populate("autor", "nombre_apellido")
+                        .populate({
+                            path: "cuerpo",
+                            select: ["titulo", "texto"],
+                            populate: {
+                            path: "imagenes",
+                            select: ["url", "epigrafe"],
+                            },
+                        })
+                        .lean()
+    
+        return res.json({
+            noticia
+        })
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
+}
+
+const noticiaGetPorBusqueda = async(req, res) => {
+    const {searchTerm} = req.body
+    try {
+        // Query
+        const noticias = await Noticia.find({
+            titulo: { $regex: searchTerm, $options: 'i' }, // i: insensible a mayúsculas/minúsculas
+          })
+          .populate("imgPortada", "url")
+          .populate("categoria", "nombre")
+          .lean()
+    
+        return res.json({
+            noticias
+        })
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
+}
+
 
 const categoriasGet = async(req, res) => {
     const categorias = await CategoriaNoticia.find()
@@ -156,9 +206,7 @@ const noticiaDelete = async(req, res) => {
             const parrafoBorrado = await Parrafo.findByIdAndDelete(parrafo._id)
             // Borrar imagen si tiene
             if(parrafoBorrado.imagenes){
-                parrafoBorrado.imagenes.forEach(
-                    async id => await deleteImagenNoticia(id, res)
-                )
+                await deleteImagenNoticia(parrafoBorrado.imagenes._id)
             }
         })
      
@@ -180,5 +228,7 @@ module.exports = {
     noticiaGet,
     noticiaDelete,
     noticiaGetPorCategoria,
-    noticiaGetPorId
+    noticiaGetPorId,
+    noticiaGetPorTitulo,
+    noticiaGetPorBusqueda
 }
