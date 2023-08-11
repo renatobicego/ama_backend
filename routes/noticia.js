@@ -12,7 +12,7 @@ const router = Router()
 router.get('/', noticiaGet)
 router.get('/categorias', categoriasGet)
 router.get('/titulo/:titulo', noticiaGetPorTitulo)
-router.get('/busqueda', noticiaGetPorBusqueda)
+router.post('/busqueda', noticiaGetPorBusqueda)
 router.get('/:id', [
     check('id', 'Noticia no registrada').isMongoId(),
     check('id').custom(existeNoticia),

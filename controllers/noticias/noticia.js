@@ -158,6 +158,7 @@ const noticiaGetPorTitulo = async(req, res) => {
 
 const noticiaGetPorBusqueda = async(req, res) => {
     const {searchTerm} = req.body
+
     try {
         // Query
         const noticias = await Noticia.find({
