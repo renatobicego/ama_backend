@@ -34,8 +34,8 @@ router.put('/:id', [
     tieneRole('ADMIN_ROLE', 'EDITOR_ROLE'),
     check('id', 'Párrafo no registrado').isMongoId(),
     check('id').custom(existeParrafoNoticia),
-    check('texto', 'Debe agregar más texto al párrafo').optional().isLength({min: 20}),
-    check('titulo', 'Debe agregar más texto al título').optional().isLength({min: 10}),
+    check('texto', 'Debe agregar más texto al párrafo').optional().isLength({min: 2}),
+    check('titulo', 'Debe agregar más texto al título').optional().isLength({min: 1}),
     check('imagenes', 'La imagen no se ha podido subir').optional().isMongoId(),
     validarCampos
 ], parrafoPut)
