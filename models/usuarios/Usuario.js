@@ -66,7 +66,17 @@ UsuarioSchema.pre("save", async function (next) {
     const hash = await bcrypt.hash(this.password, Number(bcryptSalt));
     this.password = hash;
     next();
-  })
+})
+
+UsuarioSchema.pre("findOneAndUpdate", async function (next) {
+    if (!this.getUpdate().password) {
+      return next();
+    }
+    const hash = await bcrypt.hash(this.getUpdate().password, Number(bcryptSalt));
+    this._update.password = hash;
+    next();
+})
+  
 
 UsuarioSchema.methods.toJSON = function() {
     const {__v, password, _id, ...user} = this.toObject()

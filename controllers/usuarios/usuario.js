@@ -134,6 +134,21 @@ const usuariosPut = async(req, res) => {
     }
 }
 
+const usuariosPutPassword = async(req, res) => {
+
+    const { id } = req.params;
+    const {password} = req.body;
+
+    try {   
+        const usuario = await Usuario.findByIdAndUpdate( id, {password} , {new: true})
+        return res.json(usuario)
+        
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+        
+    }
+}
+
 const usuariosDelete = async(req, res = response) => {
 
     const { id } = req.params
@@ -168,5 +183,6 @@ module.exports = {
     usuariosPut,
     usuariosDelete,
     usuariosGetPorClub,
-    usuarioGetPorId
+    usuarioGetPorId,
+    usuariosPutPassword
 }

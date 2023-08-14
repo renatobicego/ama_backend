@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete, usuariosGetPorClub, usuarioGetPorId} = require("../controllers")
+const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete, usuariosGetPorClub, usuarioGetPorId, usuariosPutPassword} = require("../controllers")
 const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
 const {existeEmail, esRoleValido, existeUsuarioPorId, existeClubPorId, existeUsuarioPorDni} = require('../helpers')
@@ -14,6 +14,13 @@ router.get('/:id', [
     check('id').custom(existeUsuarioPorId),
     validarCampos
 ], usuarioGetPorId)
+
+router.put('/password/:id', [
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeUsuarioPorId ),
+    check('password', 'La contraseña debe tener más de 8 caracteres').isLength({min: 8}),
+    validarCampos
+], usuariosPutPassword)
 
 router.put('/:id', [
     check('id', 'No es un ID válido').isMongoId(),
