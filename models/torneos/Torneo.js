@@ -29,6 +29,14 @@ const TorneoSchema = Schema({
         type: String,
         default: ''
     },
+    linkPagoFederados: {
+        type: String,
+        default: ''
+    },
+    linkPagoNoFederados: {
+        type: String,
+        default: ''
+    },
     pruebasDisponibles: [{
         type: Schema.Types.ObjectId,
         ref: 'Prueba',

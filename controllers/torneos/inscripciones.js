@@ -1,5 +1,5 @@
 const { AsyncParser } = require("json2csv")
-const {Inscripcion} = require("../../models")
+const {Inscripcion, PruebaAtleta} = require("../../models")
 const inscripcionesCsvParser = require("../../helpers/functions/inscripcionesCsvParser")
 
 
@@ -218,6 +218,9 @@ const inscripcionDelete = async(req, res) => {
 
     try {
       const inscripcion = await Inscripcion.findByIdAndDelete(id)
+      inscripcion.pruebasInscripto.forEach(async prueba => {
+        await PruebaAtleta.findByIdAndDelete(prueba)
+      })
   
       return res.json({inscripcion})
       

@@ -2,8 +2,3 @@ pagos
 newsletter
 editar uml
 
-
-front: 
-zoom a FormInputs
-pruebasFav cargar al inscribirse
-cambiar contraseña

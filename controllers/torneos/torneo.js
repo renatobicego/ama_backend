@@ -21,7 +21,9 @@ const torneoPost = async (req, res) => {
         categoriasDisponibles, 
         lugar,
         programaHorario,
-        cantidadDias
+        cantidadDias,
+        linkPagoFederados,
+        linkPagoNoFederados,
     } = req.body
 
     try {
@@ -33,7 +35,9 @@ const torneoPost = async (req, res) => {
             pruebasDisponibles, 
             categoriasDisponibles,
             programaHorario,
-            cantidadDias
+            cantidadDias,
+            linkPagoFederados,
+            linkPagoNoFederados,  
         })
         
         //Guardar Db
