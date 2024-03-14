@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete, usuariosGetPorClub, usuarioGetPorId, usuariosPutPassword} = require("../controllers")
+const { usuariosPost, usuariosGet, usuariosPut, usuariosDelete, usuariosGetPorClub, usuarioGetPorId, usuariosPutPassword, usuariosPostVarios} = require("../controllers")
 const { validarCampos } = require("../middlewares/validarCampos")
 const {check} = require('express-validator')
 const {existeEmail, esRoleValido, existeUsuarioPorId, existeClubPorId, existeUsuarioPorDni} = require('../helpers')
@@ -56,6 +56,7 @@ router.post('/', [
     check('asociacion', 'Asociación no correcta').optional().isMongoId(),
     validarCampos
 ], usuariosPost)
+router.post('/varios', usuariosPostVarios)
 
 router.delete('/:id', [
     validarJWT,

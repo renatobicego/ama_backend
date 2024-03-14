@@ -175,6 +175,58 @@ const usuariosDelete = async(req, res = response) => {
 
 }
 
+const usuariosPostVarios = async (req, res) => {
+    // Destructure the array of user objects from the request body
+    const { usuarios } = req.body;
+  
+    try {
+      // Loop through each user object in the array
+      for (const usuario of usuarios) {
+        // Extract user properties
+        const {
+          nombre_apellido,
+          email,
+          password,
+          role,
+          pais,
+          sexo,
+          fecha_nacimiento,
+          telefono,
+          dni,
+          federacion,
+          asociacion,
+          club,
+        } = usuario;
+  
+        // Create a new Usuario instance for each user
+        const newUsuario = new Usuario({
+          nombre_apellido,
+          email,
+          password,
+          role,
+          pais,
+          sexo,
+          fecha_nacimiento,
+          telefono,
+          dni,
+          federacion,
+          asociacion,
+          club,
+        });
+  
+        // Save the user to the database
+        await newUsuario.save();
+      }
+  
+      return res.json({
+        msg: "Usuarios guardados exitosamente",
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ msg: "Error al crear usuarios" });
+    }
+  };
+
 
 
 module.exports = {
@@ -184,5 +236,6 @@ module.exports = {
     usuariosDelete,
     usuariosGetPorClub,
     usuarioGetPorId,
-    usuariosPutPassword
+    usuariosPutPassword,
+    usuariosPostVarios
 }

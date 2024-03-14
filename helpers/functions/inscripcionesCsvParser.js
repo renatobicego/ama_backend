@@ -5,26 +5,38 @@ const inscripcionesCsvParser = async(inscripciones) => {
     let newData = []
 
     inscripciones.forEach((item) => {
-    const { pruebasInscripto, ...inscripcionData } = item // Extrae los datos del atleta y las pruebas inscritas.
-    const {atleta} = item
-    const fecha = new Date(atleta.fecha_nacimiento)
-    const dia = fecha.getDate()
-    const mes = fecha.getMonth() + 1 
-    const anio = fecha.getFullYear()
-
-    // Para cada prueba inscrita, crea una nueva fila con los datos del atleta y los detalles de la prueba.
-    pruebasInscripto.forEach((prueba) => {
-            const newRow = {
-            ...inscripcionData,
-            dia,
-            mes,
-            anio,
-            prueba: prueba.prueba.nombre,
-            marca: prueba.marca
-            // Agrega aquí otros campos específicos de la prueba que desees incluir en el CSV.
-            }
+        const { pruebasInscripto, ...inscripcionData } = item // Extrae los datos del atleta y las pruebas inscritas.
+        const {atleta} = item
+        const fecha = new Date(atleta.fecha_nacimiento)
+        const dia = fecha.getDate()
+        const mes = fecha.getMonth() + 1 
+        const anio = fecha.getFullYear()
+        // Para cada prueba inscrita, crea una nueva fila con los datos del atleta y los detalles de la prueba.
+        pruebasInscripto.forEach((prueba) => {
+                const newRow = {
+                    ...inscripcionData,
+                    dia,
+                    mes,
+                    anio,
+                    prueba: prueba.prueba.nombre,
+                    marca: prueba.marca
+                    // Agrega aquí otros campos específicos de la prueba que desees incluir en el CSV.
+                }
             newData.push(newRow)
         })
+        if(!pruebasInscripto.length){
+            const newRow = {
+                ...inscripcionData,
+                dia,
+                mes,
+                anio,
+                prueba: '',
+                marca: ''
+                // Agrega aquí otros campos específicos de la prueba que desees incluir en el CSV.
+            }
+            newData.push(newRow)
+        }
+        
     })
 
     const csvOpts = {
@@ -87,9 +99,10 @@ const inscripcionesCsvParser = async(inscripciones) => {
             },
         ]
     }
-    
+
     const parser = new AsyncParser(csvOpts)
     const csv = await parser.parse(newData).promise()
+
     return csv
 }
 

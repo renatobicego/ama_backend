@@ -19,12 +19,6 @@ router.post('/', [
     check('atleta').custom(existeUsuarioPorId),
     check('prueba', 'Prueba no existente').isMongoId(),
     check('prueba').custom(existePruebaEnUsuario),
-    check('marca', 'Ingrese su marca').optional().custom((value) => {
-        if (value.trim().length >= 1 && value.trim().length < 4) {
-            throw new Error('La marca debe tener una longitud mínima de 4 caracteres');
-        }
-        return true;
-    }),
     validarCampos
 ], pruebaAtletaPost)
 
