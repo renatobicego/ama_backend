@@ -2,12 +2,13 @@ const { PruebaAtleta } = require("../../models")
 
 
 const pruebaAtletaPost = async(req, res) => {
-    const {atleta, prueba, marca} = req.body
+    let {atleta, prueba, marca} = req.body
 
+    // Si marca no está presente en el cuerpo de la solicitud, establecerla como null.
+    marca = marca || null;
     try {
         const pruebaAtleta = new PruebaAtleta({atleta, prueba, marca})
         await pruebaAtleta.save()
-    
         res.json({pruebaAtleta})
         
     } catch (error) {

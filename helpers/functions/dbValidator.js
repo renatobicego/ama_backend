@@ -78,8 +78,8 @@ const existeInscripcionEnAtleta = async(torneo, {req}) => {
     }
 }
 
-const existePruebaEnUsuario = async(id) => {
-    const existePruebaRegistradaEnUsuario = await PruebaAtleta.findOne({prueba: id})
+const existePruebaEnUsuario = async(id, atletaId) => {
+    const existePruebaRegistradaEnUsuario = await PruebaAtleta.findOne({prueba: id, atleta: atletaId})
     if(existePruebaRegistradaEnUsuario){
         await existePruebaRegistradaEnUsuario.deleteOne()
     }
