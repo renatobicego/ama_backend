@@ -34,7 +34,7 @@ const validarJWT = async( req = request, res = response, next ) => {
 
         console.log(error);
         res.status(401).json({
-            msg: 'Token no válido'
+            msg: 'Token no válido. Por favor, cerrar sesión en Mi Perfil > Cerrar Sesión, e iniciar sesión nuevamente'
         })
     }
 
