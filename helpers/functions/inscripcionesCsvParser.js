@@ -42,59 +42,59 @@ const inscripcionesCsvParser = async(inscripciones) => {
     const csvOpts = {
         fields: [
             {
-            label: 'Categoria',
+            label: 'CATEGORIA',
             value: 'categoria.nombre'
             },
             {
-            label: 'Sexo',
+            label: 'SEXO',
             value: 'atleta.sexo'
             },
             {
-            label: 'Prueba',
+            label: 'PRUEBA',
             value: 'prueba'
             },
             {
-            label: 'Apellido y Nombre',
+            label: 'APELLIDO_Y_NOMBRE',
             value: 'atleta.nombre_apellido'
             },
             {
-            label: 'Pais',
+            label: 'PAIS',
             value: 'atleta.pais'
             },
             {
-            label: 'Documento',
+            label: 'DOCUMENTO',
             value: 'atleta.dni'
             },
             {
-            label: 'Dia',
+            label: 'DIA',
             value: 'dia'
             },
             {
-            label: 'Mes',
+            label: 'MES',
             value: 'mes'
             },
             {
-            label: 'Año',
+            label: 'ANIO',
             value: 'anio'
             },
             {
-            label: 'Marca',
+            label: 'MEJOR_MARCA',
             value: 'marca'
             },
             {
-            label: 'Club',
+            label: 'CLUB',
             value: 'atleta.club.siglas'
             },
             {
-            label: 'Asociación',
+            label: 'ASOCIACION',
             value: 'atleta.asociacion.siglas'
             },
             {
-            label: 'Federación Provincial',
+            label: 'FED.PROVINCIAL',
             value: 'atleta.federacion.siglas'
             },
             {
-            label: 'Federación Nacional',
+            label: 'FED.NACIONAL',
             value: 'atleta.pais'
             },
         ]
