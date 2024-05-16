@@ -19,7 +19,7 @@ const inscripcionesCsvParser = async(inscripciones) => {
                     mes,
                     anio,
                     prueba: prueba.prueba.nombre,
-                    marca: prueba.marca
+                    marca: `${prueba.marca}`
                     // Agrega aquí otros campos específicos de la prueba que desees incluir en el CSV.
                 }
             newData.push(newRow)
