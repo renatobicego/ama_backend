@@ -18,7 +18,6 @@ router.post('/', [
     check('atleta', 'Atleta no registrado').isMongoId(),
     check('atleta').custom(existeUsuarioPorId),
     check('prueba', 'Prueba no existente').isMongoId(),
-    check('prueba').custom((value, { req }) => existePruebaEnUsuario(value, req.body.atleta)),
     validarCampos
 ], pruebaAtletaPost)
 
