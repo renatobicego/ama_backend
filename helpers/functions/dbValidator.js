@@ -11,19 +11,6 @@ const {
   Noticia,
 } = require("../../models");
 
-const existeEmail = async (email, { req }) => {
-  const buscarMail = await Usuario.findOne({ email });
-  if (req.params.id) {
-    if (buscarMail._id.toString() !== req.params.id) {
-      throw new Error(`El correo ${email} ya está registrado`);
-    }
-  } else {
-    if (buscarMail) {
-      throw new Error(`El correo ${email} ya está registrado`);
-    }
-  }
-};
-
 const existeEmailClub = async (email) => {
   const buscarMail = await Club.findOne({ email });
   if (buscarMail) {
@@ -142,7 +129,6 @@ const existeUsuarioPorDni = async (dni, { req }) => {
 };
 
 module.exports = {
-  existeEmail,
   esRoleValido,
   existeUsuarioPorId,
   existeEmailClub,

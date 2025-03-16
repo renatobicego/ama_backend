@@ -6,7 +6,6 @@ const usuariosPost = async (req, res) => {
 
   let {
     nombre_apellido,
-    email,
     password,
     role,
     pais,
@@ -22,7 +21,6 @@ const usuariosPost = async (req, res) => {
   try {
     const usuario = new Usuario({
       nombre_apellido,
-      email,
       password,
       role,
       pais,
@@ -178,7 +176,6 @@ const usuariosPostVarios = async (req, res) => {
       // Extract user properties
       const {
         nombre_apellido,
-        email,
         password,
         role,
         pais,
@@ -194,7 +191,6 @@ const usuariosPostVarios = async (req, res) => {
       // Create a new Usuario instance for each user
       const newUsuario = new Usuario({
         nombre_apellido,
-        email,
         password,
         role,
         pais,
