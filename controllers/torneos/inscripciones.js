@@ -1,6 +1,7 @@
 const PDFDocument = require("pdfkit");
 const { Inscripcion, PruebaAtleta } = require("../../models");
-const inscripcionesCsvParser = require("../../helpers/functions/inscripcionesCsvParser");
+const inscripcionesXlsParserAdvanced = require("../../helpers/functions/inscripcionesCsvParser");
+const archiver = require("archiver");
 
 const inscripcionPost = async (req, res) => {
   // Obtener solo variables necesarias
@@ -31,7 +32,6 @@ const inscripcionPost = async (req, res) => {
 };
 
 const inscripcionGetPorTorneo = async (req, res) => {
-  // Obtener id de torneo
   const { idTorneo } = req.params;
 
   try {
@@ -64,7 +64,6 @@ const inscripcionGetPorTorneo = async (req, res) => {
           ],
         })
         .populate("categoria", "nombre")
-        // Mostrar las pruebas inscripto junto a la marca
         .populate({
           path: "pruebasInscripto",
           select: ["marca"],
@@ -76,15 +75,41 @@ const inscripcionGetPorTorneo = async (req, res) => {
         .lean(),
     ]);
 
-    const csv = await inscripcionesCsvParser(inscripciones);
+    const xlsBuffer1 = await inscripcionesXlsParserAdvanced(
+      inscripciones.filter((inscr) => inscr.categoria.nombre !== "Master")
+    );
+    const xlsBuffer2 = await inscripcionesXlsParserAdvanced(
+      inscripciones.filter((inscr) => inscr.categoria.nombre === "Master")
+    );
 
     res.setHeader(
       "Content-disposition",
-      "attachment; filename=inscripciones.csv"
+      "attachment; filename=inscripciones.xlsx"
     );
-    res.set("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
 
-    return res.send(csv);
+    // Create ZIP file
+    const archive = archiver("zip", { zlib: { level: 9 } });
+
+    // Set response headers for ZIP
+    res.setHeader(
+      "Content-disposition",
+      "attachment; filename=inscripciones.zip"
+    );
+    res.setHeader("Content-Type", "application/zip");
+
+    // Pipe archive to response
+    archive.pipe(res);
+
+    // Add files to archive
+    archive.append(xlsBuffer1, { name: "inscripciones.xls" });
+    archive.append(xlsBuffer2, { name: "inscripciones-master.xls" });
+
+    // Finalize the archive
+    await archive.finalize();
   } catch (error) {
     return res.status(500).json({ msg: error.message });
   }

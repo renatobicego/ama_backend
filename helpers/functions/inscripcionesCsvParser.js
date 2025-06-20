@@ -1,109 +1,98 @@
-const { AsyncParser } = require("json2csv")
+const XLSX = require("xlsx");
+const inscripcionesXlsParserAdvanced = async (inscripciones) => {
+  // Procesar datos
+  const newData = [];
 
-const inscripcionesCsvParser = async(inscripciones) => {
-    // Crea un nuevo array para almacenar los datos desglosados por cada inscripción.
-    let newData = []
+  inscripciones.forEach((item) => {
+    const { pruebasInscripto, ...inscripcionData } = item;
+    const { atleta } = item;
+    const fecha = new Date(atleta.fecha_nacimiento);
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth() + 1;
+    const anio = fecha.getFullYear();
 
-    inscripciones.forEach((item) => {
-        const { pruebasInscripto, ...inscripcionData } = item // Extrae los datos del atleta y las pruebas inscritas.
-        const {atleta} = item
-        const fecha = new Date(atleta.fecha_nacimiento)
-        const dia = fecha.getDate()
-        const mes = fecha.getMonth() + 1 
-        const anio = fecha.getFullYear()
-        // Para cada prueba inscrita, crea una nueva fila con los datos del atleta y los detalles de la prueba.
-        pruebasInscripto.forEach((prueba) => {
-                const newRow = {
-                    ...inscripcionData,
-                    dia,
-                    mes,
-                    anio,
-                    prueba: prueba.prueba.nombre,
-                    marca: `${prueba.marca}`
-                    // Agrega aquí otros campos específicos de la prueba que desees incluir en el CSV.
-                }
-            newData.push(newRow)
-        })
-        if(!pruebasInscripto.length){
-            const newRow = {
-                ...inscripcionData,
-                dia,
-                mes,
-                anio,
-                prueba: '',
-                marca: ''
-                // Agrega aquí otros campos específicos de la prueba que desees incluir en el CSV.
-            }
-            newData.push(newRow)
-        }
-        
-    })
+    pruebasInscripto.forEach((prueba) => {
+      const newRow = {
+        categoria: inscripcionData.categoria?.nombre
+          ? inscripcionData.categoria?.nombre === "Master"
+            ? "Mayores"
+            : inscripcionData.categoria?.nombre
+          : "",
+        sexo: atleta.sexo || "",
+        prueba: prueba.prueba?.nombre || "",
+        apellido_y_nombre: atleta.nombre_apellido || "",
+        pais: atleta.pais || "",
+        documento: atleta.dni || "",
+        dia: dia,
+        mes: mes,
+        anio: anio,
+        mejor_marca: prueba.marca || "",
+        numero: "",
+        club: atleta.club?.siglas || "",
+        asociacion: atleta.asociacion?.siglas || "",
+        fed_provincial: atleta.federacion?.siglas || "",
+        fed_nacional: atleta.pais || "",
+      };
+      newData.push(newRow);
+    });
 
-    const csvOpts = {
-        fields: [
-            {
-            label: 'CATEGORIA',
-            value: 'categoria.nombre'
-            },
-            {
-            label: 'SEXO',
-            value: 'atleta.sexo'
-            },
-            {
-            label: 'PRUEBA',
-            value: 'prueba'
-            },
-            {
-            label: 'APELLIDO_Y_NOMBRE',
-            value: 'atleta.nombre_apellido'
-            },
-            {
-            label: 'PAIS',
-            value: 'atleta.pais'
-            },
-            {
-            label: 'DOCUMENTO',
-            value: 'atleta.dni'
-            },
-            {
-            label: 'DIA',
-            value: 'dia'
-            },
-            {
-            label: 'MES',
-            value: 'mes'
-            },
-            {
-            label: 'ANIO',
-            value: 'anio'
-            },
-            {
-            label: 'MEJOR_MARCA',
-            value: 'marca'
-            },
-            {
-            label: 'CLUB',
-            value: 'atleta.club.siglas'
-            },
-            {
-            label: 'ASOCIACION',
-            value: 'atleta.asociacion.siglas'
-            },
-            {
-            label: 'FED.PROVINCIAL',
-            value: 'atleta.federacion.siglas'
-            },
-            {
-            label: 'FED.NACIONAL',
-            value: 'atleta.pais'
-            },
-        ]
+    if (!pruebasInscripto.length) {
+      const newRow = {
+        categoria: inscripcionData.categoria?.nombre || "",
+        sexo: atleta.sexo || "",
+        prueba: "",
+        apellido_y_nombre: atleta.nombre_apellido || "",
+        pais: atleta.pais || "",
+        documento: atleta.dni || "",
+        dia: dia,
+        mes: mes,
+        anio: anio,
+        mejor_marca: "",
+        numero: "",
+        club: atleta.club?.siglas || "",
+        asociacion: atleta.asociacion?.siglas || "",
+        fed_provincial: atleta.federacion?.siglas || "",
+        fed_nacional: atleta.pais || "",
+      };
+      newData.push(newRow);
     }
+  });
 
-    const parser = new AsyncParser(csvOpts)
-    const csv = await parser.parse(newData).promise()
+  // Create workbook and worksheet
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.json_to_sheet(newData);
 
-    return csv
-}
+  // Configure column widths
+  const columnWidths = [
+    { wch: 15 }, // CATEGORIA
+    { wch: 8 }, // SEXO
+    { wch: 20 }, // PRUEBA
+    { wch: 25 }, // APELLIDO_Y_NOMBRE
+    { wch: 12 }, // PAIS
+    { wch: 12 }, // DOCUMENTO
+    { wch: 5 }, // DIA
+    { wch: 5 }, // MES
+    { wch: 6 }, // ANIO
+    { wch: 12 }, // MEJOR_MARCA
+    { wch: 3 }, // NUMERO
+    { wch: 15 }, // CLUB
+    { wch: 15 }, // ASOCIACION
+    { wch: 15 }, // FED.PROVINCIAL
+    { wch: 15 }, // FED.NACIONAL
+  ];
 
-module.exports = inscripcionesCsvParser
+  worksheet["!cols"] = columnWidths;
+
+  // Add worksheet to workbook
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Inscripciones");
+
+  // Generate buffer in XLS format (Excel 97-2003)
+  const xlsBuffer = XLSX.write(workbook, {
+    type: "buffer",
+    bookType: "xls", // This explicitly sets the format to Excel 97-2003
+  });
+
+  return xlsBuffer;
+};
+
+module.exports = inscripcionesXlsParserAdvanced;
