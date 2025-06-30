@@ -9,7 +9,7 @@ const { generarJWT } = require("../../helpers");
 const sendEmail = require("../../utils/emails/sendEmail");
 
 const login = async (req, res = response) => {
-  const { dni, password } = req.body;
+  const { dni } = req.body;
 
   try {
     // Verificar si el dni existe
@@ -18,15 +18,6 @@ const login = async (req, res = response) => {
       return res.status(400).json({
         msg: "Usuario no registrado",
         path: "dni",
-      });
-    }
-
-    // Verificar la contraseña
-    const validPassword = bcrypt.compareSync(password, usuario.password);
-    if (!validPassword) {
-      return res.status(400).json({
-        msg: "Contraseña incorrecta",
-        path: "password",
       });
     }
 

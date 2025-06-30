@@ -6,7 +6,6 @@ const {
   usuariosDelete,
   usuariosGetPorClub,
   usuarioGetPorId,
-  usuariosPutPassword,
   usuariosPostVarios,
 } = require("../controllers");
 const { validarCampos } = require("../middlewares/validarCampos");
@@ -32,8 +31,6 @@ router.get(
   ],
   usuarioGetPorId
 );
-
-router.put("/password/:dni", usuariosPutPassword);
 
 router.put(
   "/:id",
@@ -70,7 +67,6 @@ router.post(
     check("fecha_nacimiento", "Fecha de nacimiento obligatoria").isDate({
       format: "YYYY-MM-dd",
     }),
-    check("password", "Password obligatorio").isLength({ min: 8 }),
     check("role").custom(esRoleValido),
     check("club").optional().custom(existeClubPorId),
     check("federacion", "Federación no correcta").optional().isMongoId(),

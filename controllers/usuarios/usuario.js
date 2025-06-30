@@ -6,7 +6,6 @@ const usuariosPost = async (req, res) => {
 
   let {
     nombre_apellido,
-    password,
     role,
     pais,
     sexo,
@@ -21,7 +20,6 @@ const usuariosPost = async (req, res) => {
   try {
     const usuario = new Usuario({
       nombre_apellido,
-      password,
       role,
       pais,
       sexo,
@@ -108,34 +106,13 @@ const usuariosGetPorClub = async (req, res) => {
 
 const usuariosPut = async (req, res) => {
   const { id } = req.params;
-  const { _id, password, ...resto } = req.body;
+  const { _id, ...resto } = req.body;
 
   try {
     if (resto.club === "") {
       resto.club = null;
     }
     const usuario = await Usuario.findByIdAndUpdate(id, resto, { new: true });
-    return res.json(usuario);
-  } catch (error) {
-    return res.status(500).json({ msg: error.message });
-  }
-};
-
-const usuariosPutPassword = async (req, res) => {
-  const { dni } = req.params;
-
-  const id = await Usuario.findOne({ dni });
-
-  if (!id) {
-    return res.status(404).json({ msg: "El usuario no existe" });
-  }
-
-  try {
-    const usuario = await Usuario.findByIdAndUpdate(
-      id,
-      { password: dni },
-      { new: true }
-    );
     return res.json(usuario);
   } catch (error) {
     return res.status(500).json({ msg: error.message });
@@ -176,7 +153,6 @@ const usuariosPostVarios = async (req, res) => {
       // Extract user properties
       const {
         nombre_apellido,
-        password,
         role,
         pais,
         sexo,
@@ -191,7 +167,6 @@ const usuariosPostVarios = async (req, res) => {
       // Create a new Usuario instance for each user
       const newUsuario = new Usuario({
         nombre_apellido,
-        password,
         role,
         pais,
         sexo,
@@ -223,6 +198,5 @@ module.exports = {
   usuariosDelete,
   usuariosGetPorClub,
   usuarioGetPorId,
-  usuariosPutPassword,
   usuariosPostVarios,
 };
