@@ -1,52 +1,70 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const TorneoSchema = Schema({
-    nombre: {
-        type: String,
-        required: [true, 'El nombre es obligatorio']
+  nombre: {
+    type: String,
+    required: [true, "El nombre es obligatorio"],
+  },
+  lugar: {
+    type: String,
+    required: [true, "El lugar es obligatorio"],
+  },
+  fecha: {
+    type: Date,
+    required: [true, "La fecha es obligatoria"],
+  },
+  cantidadDias: {
+    type: Number,
+    required: [true, "La cantidad de dias es obligatorio"],
+  },
+  inscripcionesAbiertas: {
+    type: Boolean,
+    default: true,
+  },
+  requerirComprobante: {
+    type: Boolean,
+    default: true,
+  },
+  programaHorario: {
+    type: String,
+    default: "",
+  },
+  resultados: {
+    type: String,
+    default: "",
+  },
+  linkPagoFederados: {
+    type: String,
+    default: "",
+  },
+  linkPagoNoFederados: {
+    type: String,
+    default: "",
+  },
+  pruebasDisponibles: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Prueba",
+      required: true,
     },
-    lugar: {
-        type: String,
-        required: [true, 'El lugar es obligatorio']
+  ],
+  categoriasDisponibles: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Categoria",
+      required: true,
     },
-    fecha: {
-        type: Date,
-        required: [true, 'La fecha es obligatoria']
+  ],
+  precioInscripcion: {
+    cada: {
+      type: Number,
+      required: false,
     },
-    cantidadDias: {
-        type: Number, 
-        required: [true, 'La cantidad de dias es obligatorio']
+    ama: {
+      type: Number,
+      required: false,
     },
-    inscripcionesAbiertas: {
-        type: Boolean,
-        default: true
-    },
-    programaHorario: {
-        type: String,
-        default: ''
-    },
-    resultados: {
-        type: String,
-        default: ''
-    },
-    linkPagoFederados: {
-        type: String,
-        default: ''
-    },
-    linkPagoNoFederados: {
-        type: String,
-        default: ''
-    },
-    pruebasDisponibles: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Prueba',
-        required: true
-    }],
-    categoriasDisponibles: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Categoria',
-        required: true
-    }],
-})
+  },
+});
 
-module.exports = model( 'Torneo', TorneoSchema )
+module.exports = model("Torneo", TorneoSchema);

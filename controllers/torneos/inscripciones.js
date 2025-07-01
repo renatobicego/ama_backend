@@ -5,7 +5,7 @@ const archiver = require("archiver");
 
 const inscripcionPost = async (req, res) => {
   // Obtener solo variables necesarias
-  const { torneo, atleta, pruebasInscripto, categoria } = req.body;
+  const { torneo, atleta, pruebasInscripto, categoria, comprobante } = req.body;
 
   // Verificar que la inscripción sea al mismo usuario
   if (
@@ -23,6 +23,7 @@ const inscripcionPost = async (req, res) => {
       atleta,
       pruebasInscripto,
       categoria,
+      comprobante,
     });
     await inscripcion.save();
     return res.json({ inscripcion });
