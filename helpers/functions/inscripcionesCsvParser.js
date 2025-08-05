@@ -1,7 +1,26 @@
 const XLSX = require("xlsx");
 const inscripcionesXlsParserAdvanced = async (inscripciones) => {
-  // Procesar datos
-  const newData = [];
+  // 1. Define headers explicitly (as array of keys in desired order)
+  const headers = [
+    "categoria",
+    "sexo",
+    "prueba",
+    "apellido_y_nombre",
+    "pais",
+    "documento",
+    "dia",
+    "mes",
+    "anio",
+    "mejor_marca",
+    "numero",
+    "club",
+    "asociacion",
+    "fed_provincial",
+    "fed_nacional",
+  ];
+
+  // 2. Prepare data rows
+  const dataRows = [];
 
   inscripciones.forEach((item) => {
     const { pruebasInscripto, ...inscripcionData } = item;
@@ -33,7 +52,7 @@ const inscripcionesXlsParserAdvanced = async (inscripciones) => {
         fed_provincial: atleta.federacion?.siglas || "",
         fed_nacional: atleta.pais || "",
       };
-      newData.push(newRow);
+      dataRows.push(newRow);
     });
 
     if (!pruebasInscripto.length) {
@@ -54,16 +73,21 @@ const inscripcionesXlsParserAdvanced = async (inscripciones) => {
         fed_provincial: atleta.federacion?.siglas || "",
         fed_nacional: atleta.pais || "",
       };
-      newData.push(newRow);
+      dataRows.push(newRow);
     }
   });
 
-  // Create workbook and worksheet
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.json_to_sheet(newData);
+  // 3. Build the worksheet with an empty row, then headers, then data
+  const rows = [
+    headers.map(() => ""), // Empty row
+    headers, // Header row
+    ...dataRows.map((row) => headers.map((key) => row[key] || "")), // Data
+  ];
+  // 4. Create worksheet
+  const worksheet = XLSX.utils.aoa_to_sheet(rows);
 
-  // Configure column widths
-  const columnWidths = [
+  // 5. Set column widths
+  worksheet["!cols"] = [
     { wch: 15 }, // CATEGORIA
     { wch: 8 }, // SEXO
     { wch: 20 }, // PRUEBA
@@ -81,15 +105,14 @@ const inscripcionesXlsParserAdvanced = async (inscripciones) => {
     { wch: 15 }, // FED.NACIONAL
   ];
 
-  worksheet["!cols"] = columnWidths;
-
-  // Add worksheet to workbook
+  // 6. Create workbook and add worksheet
+  const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Inscripciones");
 
-  // Generate buffer in XLS format (Excel 97-2003)
+  // 7. Generate XLS buffer
   const xlsBuffer = XLSX.write(workbook, {
     type: "buffer",
-    bookType: "xls", // This explicitly sets the format to Excel 97-2003
+    bookType: "xls",
   });
 
   return xlsBuffer;
