@@ -27,6 +27,19 @@ const InscripcionSchema = Schema({
     type: String,
     required: false,
   },
+  numero: {
+    type: Number,
+    default: null,
+  },
+  esFederado: {
+    type: Boolean,
+    default: false,
+  },
+  fuenteRegistro: {
+    type: String,
+    enum: ["app", "cada", "libre"],
+    default: "app",
+  },
 });
 
 module.exports = model("Inscripcion", InscripcionSchema);

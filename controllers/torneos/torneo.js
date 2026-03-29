@@ -119,7 +119,7 @@ const torneoGetPorId = async (req, res) => {
           select: ["nombre"],
         },
       })
-      .populate("categoriasDisponibles", "nombre")
+      .populate("categoriasDisponibles", "nombre esMaster")
       .lean();
 
     return res.json({
