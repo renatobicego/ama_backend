@@ -22,7 +22,10 @@ const login = async (req, res = response) => {
     }
 
     // Generar el JWT
-    const token = await generarJWT(usuario.id);
+    const token = await generarJWT(usuario.id, {
+      role: usuario.role,
+      isEditor: usuario.isEditor ?? false,
+    });
 
     return res.json({
       usuario,
@@ -71,7 +74,7 @@ const passwordResetRequest = async (req, res) => {
     usuario.email,
     "Password Reset Request",
     { nombre: usuario.nombre_apellido, link: link },
-    "./passwordReset/passwordResetRequest.handlebars"
+    "./passwordReset/passwordResetRequest.handlebars",
   );
 
   return res.json({ link });
@@ -93,7 +96,7 @@ const passwordReset = async (req, res) => {
   await Usuario.updateOne(
     { _id: usuario },
     { $set: { password: hash } },
-    { new: true }
+    { new: true },
   );
 
   // Mail de confirmación
@@ -104,7 +107,7 @@ const passwordReset = async (req, res) => {
     {
       nombre: usuarioDb.nombre_apellido,
     },
-    "./passwordReset/passwordResetSuccessful.handlebars"
+    "./passwordReset/passwordResetSuccessful.handlebars",
   );
   await passwordResetToken.deleteOne();
 

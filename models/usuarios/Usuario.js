@@ -46,6 +46,10 @@ const UsuarioSchema = Schema({
     ref: "Club",
     default: null,
   },
+  isEditor: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UsuarioSchema.methods.toJSON = function () {
