@@ -9,33 +9,42 @@ const { generarJWT } = require("../../helpers");
 const sendEmail = require("../../utils/emails/sendEmail");
 
 const login = async (req, res = response) => {
-  const { dni } = req.body;
+  const { dni, password, sistemaJueces } = req.body;
 
   try {
-    // Verificar si el dni existe
-    const usuario = await Usuario.findOne({ dni });
+    const usuario = await Usuario.findOne({ dni }).select("+password");
     if (!usuario) {
-      return res.status(400).json({
-        msg: "Usuario no registrado",
-        path: "dni",
-      });
+      return res
+        .status(400)
+        .json({ msg: "Usuario no registrado", path: "dni" });
     }
 
-    // Generar el JWT
+    if (sistemaJueces) {
+      const isAdmin = usuario.role === "ADMIN_ROLE" || usuario.isEditor;
+      if (isAdmin) {
+        if (!password) {
+          return res
+            .status(400)
+            .json({ msg: "Contraseña requerida", path: "password" });
+        }
+        if (usuario.password !== password) {
+          return res
+            .status(400)
+            .json({ msg: "Contraseña incorrecta", path: "password" });
+        }
+      }
+    }
+
     const token = await generarJWT(usuario.id, {
       role: usuario.role,
       isEditor: usuario.isEditor ?? false,
     });
 
-    return res.json({
-      usuario,
-      token,
-    });
+    return res.json({ usuario, token });
   } catch (error) {
-    return res.status(500).json({
-      msg: "Error en el servidor en el login",
-      error: error.message,
-    });
+    return res
+      .status(500)
+      .json({ msg: "Error en el servidor en el login", error: error.message });
   }
 };
 
