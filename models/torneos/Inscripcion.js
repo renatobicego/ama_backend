@@ -40,6 +40,40 @@ const InscripcionSchema = Schema({
     enum: ["app", "cada", "libre"],
     default: "app",
   },
+  // ── Payment fields (all optional with defaults to avoid breaking existing systems) ──
+  pagado: {
+    type: Boolean,
+    default: false,
+  },
+  metodoPago: {
+    type: String,
+    enum: ["Efectivo", "Transferencia"],
+    default: "Efectivo",
+  },
+  monto: {
+    type: Number,
+    default: 0,
+  },
+  manual: {
+    type: Boolean,
+    default: false,
+  },
+  anticipado: {
+    type: Boolean,
+    default: false,
+  },
+  observacion: {
+    type: String,
+    default: null,
+  },
 });
+
+// Indexes
+InscripcionSchema.index(
+  { torneo: 1, numero: 1 },
+  { unique: true, sparse: true },
+);
+InscripcionSchema.index({ torneo: 1, atleta: 1 }, { unique: true });
+InscripcionSchema.index({ torneo: 1, pagado: 1 });
 
 module.exports = model("Inscripcion", InscripcionSchema);
