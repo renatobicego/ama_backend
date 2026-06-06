@@ -71,7 +71,7 @@ const InscripcionSchema = Schema({
 // Indexes
 InscripcionSchema.index(
   { torneo: 1, numero: 1 },
-  { unique: true, sparse: true },
+  { unique: true, partialFilterExpression: { numero: { $type: "number" } } },
 );
 InscripcionSchema.index({ torneo: 1, atleta: 1 }, { unique: true });
 InscripcionSchema.index({ torneo: 1, pagado: 1 });
