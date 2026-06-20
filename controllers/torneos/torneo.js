@@ -86,8 +86,8 @@ const torneoGetResultados = async (req, res) => {
   try {
     // Query
     const [total, torneos] = await Promise.all([
-      Torneo.countDocuments({ inscripcionesAbiertas: false }),
-      Torneo.find({ inscripcionesAbiertas: false })
+      Torneo.countDocuments({ mostrarEnResultados: true }),
+      Torneo.find({ mostrarEnResultados: true })
         .skip(Number(desde))
         .limit(Number(limite))
         // Ordenar por fecha
@@ -119,7 +119,7 @@ const torneoGetPorId = async (req, res) => {
           select: ["nombre"],
         },
       })
-      .populate("categoriasDisponibles", "nombre")
+      .populate("categoriasDisponibles", "nombre esMaster")
       .lean();
 
     return res.json({
