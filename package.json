@@ -9,6 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
+    "dev:qa": "DOTENV_CONFIG_PATH=../sistemaJueces/functions/qa.env nodemon -r dotenv/config app.js",
     "deploy": "firebase deploy"
   },
   "author": "",
