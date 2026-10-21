@@ -7,6 +7,7 @@ const {
   usuariosGetPorClub,
   usuarioGetPorId,
   usuariosPostVarios,
+  setEditor,
 } = require("../controllers");
 const { validarCampos } = require("../middlewares/validarCampos");
 const { check } = require("express-validator");
@@ -17,6 +18,8 @@ const {
   existeUsuarioPorDni,
 } = require("../helpers");
 const { validarJWT } = require("../middlewares/validarJwt");
+
+const { tieneRole } = require("../middlewares/validarRoles");
 
 const router = Router();
 
@@ -29,7 +32,7 @@ router.get(
     check("id").custom(existeUsuarioPorId),
     validarCampos,
   ],
-  usuarioGetPorId
+  usuarioGetPorId,
 );
 
 router.put(
@@ -52,7 +55,7 @@ router.put(
     check("asociacion", "Asociación obligatoria").optional().isMongoId(),
     validarCampos,
   ],
-  usuariosPut
+  usuariosPut,
 );
 
 router.post(
@@ -73,9 +76,20 @@ router.post(
     check("asociacion", "Asociación no correcta").optional().isMongoId(),
     validarCampos,
   ],
-  usuariosPost
+  usuariosPost,
 );
 router.post("/varios", usuariosPostVarios);
+
+router.post(
+  "/set-editor",
+  [
+    validarJWT,
+    tieneRole("ADMIN_ROLE"),
+    check("dni", "DNI obligatorio").not().isEmpty(),
+    validarCampos,
+  ],
+  setEditor,
+);
 
 router.delete(
   "/:id",
@@ -85,7 +99,7 @@ router.delete(
     check("id").custom(existeUsuarioPorId),
     validarCampos,
   ],
-  usuariosDelete
+  usuariosDelete,
 );
 
 module.exports = router;

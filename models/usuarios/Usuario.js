@@ -46,6 +46,16 @@ const UsuarioSchema = Schema({
     ref: "Club",
     default: null,
   },
+  isEditor: {
+    type: Boolean,
+    default: false,
+  },
+  // Plain text password — set manually in DB. Only required for ADMIN_ROLE/isEditor users.
+  password: {
+    type: String,
+    default: null,
+    select: false,
+  },
 });
 
 UsuarioSchema.methods.toJSON = function () {

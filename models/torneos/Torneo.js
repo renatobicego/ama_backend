@@ -21,6 +21,10 @@ const TorneoSchema = Schema({
     type: Boolean,
     default: true,
   },
+  mostrarEnResultados: {
+    type: Boolean,
+    default: false,
+  },
   requerirComprobante: {
     type: Boolean,
     default: true,

@@ -191,6 +191,23 @@ const usuariosPostVarios = async (req, res) => {
   }
 };
 
+const setEditor = async (req, res) => {
+  const { dni } = req.body;
+  if (!dni) return res.status(400).json({ msg: "DNI obligatorio" });
+
+  try {
+    const usuario = await Usuario.findOneAndUpdate(
+      { dni },
+      { isEditor: true },
+      { new: true },
+    );
+    if (!usuario) return res.status(404).json({ msg: "Usuario no encontrado" });
+    return res.json({ msg: "Editor habilitado", usuario });
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
+};
+
 module.exports = {
   usuariosPost,
   usuariosGet,
@@ -199,4 +216,5 @@ module.exports = {
   usuariosGetPorClub,
   usuarioGetPorId,
   usuariosPostVarios,
+  setEditor,
 };
